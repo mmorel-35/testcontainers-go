@@ -56,7 +56,7 @@ func TestWaitForHealthTimesOutForUnhealthy(t *testing.T) {
 	err := wg.WaitUntilReady(context.Background(), target)
 
 	require.Error(t, err)
-	assert.True(t, errors.Is(err, context.DeadlineExceeded))
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
 }
 
 // TestWaitForHealthSucceeds ensures that a healthy container always succeeds.
@@ -111,7 +111,7 @@ func TestWaitFailsForNilHealth(t *testing.T) {
 
 	err := wg.WaitUntilReady(context.Background(), target)
 	require.Error(t, err)
-	assert.True(t, errors.Is(err, context.DeadlineExceeded))
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
 }
 
 func TestWaitForHealthFailsDueToOOMKilledContainer(t *testing.T) {
@@ -126,7 +126,7 @@ func TestWaitForHealthFailsDueToOOMKilledContainer(t *testing.T) {
 
 	err := wg.WaitUntilReady(context.Background(), target)
 	require.Error(t, err)
-	assert.EqualError(t, err, "container crashed with out-of-memory (OOMKilled)")
+	require.EqualError(t, err, "container crashed with out-of-memory (OOMKilled)")
 }
 
 func TestWaitForHealthFailsDueToExitedContainer(t *testing.T) {
@@ -142,7 +142,7 @@ func TestWaitForHealthFailsDueToExitedContainer(t *testing.T) {
 
 	err := wg.WaitUntilReady(context.Background(), target)
 	require.Error(t, err)
-	assert.EqualError(t, err, "container exited with code 1")
+	require.EqualError(t, err, "container exited with code 1")
 }
 
 func TestWaitForHealthFailsDueToUnexpectedContainerStatus(t *testing.T) {
@@ -157,5 +157,5 @@ func TestWaitForHealthFailsDueToUnexpectedContainerStatus(t *testing.T) {
 
 	err := wg.WaitUntilReady(context.Background(), target)
 	require.Error(t, err)
-	assert.EqualError(t, err, "unexpected container status \"dead\"")
+	require.EqualError(t, err, "unexpected container status \"dead\"")
 }
