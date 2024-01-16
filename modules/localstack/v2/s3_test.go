@@ -122,7 +122,7 @@ func TestS3(t *testing.T) {
 
 			objects := output.Contents
 
-			assert.Equal(t, 1, len(objects))
+			assert.Len(t, objects, 1)
 			assert.Equal(t, s3Key1, *objects[0].Key)
 			assert.Equal(t, aws.Int64(int64(len(body1))), objects[0].Size)
 		})
