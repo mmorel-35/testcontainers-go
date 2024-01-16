@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/testcontainers/testcontainers-go/modulegen/internal"
 	"github.com/testcontainers/testcontainers-go/modulegen/internal/context"
