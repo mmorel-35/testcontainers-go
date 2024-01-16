@@ -103,7 +103,7 @@ func TestS3(t *testing.T) {
 			assert.NotNil(t, output)
 
 			buckets := output.Buckets
-			assert.Equal(t, 1, len(buckets))
+			assert.Len(t, buckets, 1)
 			assert.Equal(t, bucketName, *buckets[0].Name)
 		})
 
@@ -116,7 +116,7 @@ func TestS3(t *testing.T) {
 
 			objects := output.Contents
 
-			assert.Equal(t, 1, len(objects))
+			assert.Len(t, objects, 1)
 			assert.Equal(t, s3Key1, *objects[0].Key)
 			assert.Equal(t, int64(len(body1)), *objects[0].Size)
 		})
