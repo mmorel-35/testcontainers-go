@@ -82,7 +82,7 @@ func TestGetDockerConfig(t *testing.T) {
 		t.Setenv("DOCKER_CONFIG", testDockerConfigDirPath)
 
 		cfg, err := getDockerConfig()
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotEmpty(t, cfg)
 
 		assert.Len(t, cfg.AuthConfigs, 1)
@@ -108,7 +108,7 @@ func TestGetDockerConfig(t *testing.T) {
 		}`)
 
 		registry, cfg, err := DockerImageAuth(context.Background(), exampleAuth+"/my/image:latest")
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotEmpty(t, cfg)
 
 		assert.Equal(t, exampleAuth, registry)
@@ -130,7 +130,7 @@ func TestGetDockerConfig(t *testing.T) {
 		}`)
 
 		registry, cfg, err := DockerImageAuth(context.Background(), imageReg+imagePath)
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotEmpty(t, cfg)
 
 		assert.Equal(t, imageReg, registry)
