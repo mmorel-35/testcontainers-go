@@ -244,7 +244,7 @@ func TestContainerWithReaperNetwork(t *testing.T) {
 		require.NoError(t, err)
 		// use t.Cleanup to run after terminateContainerOnEnd
 		t.Cleanup(func() {
-			assert.NoError(t, n.Remove(ctx))
+			require.NoError(t, n.Remove(ctx))
 		})
 
 		networks = append(networks, n.Name)
@@ -425,7 +425,7 @@ func TestWithNetwork(t *testing.T) {
 		assert.Len(t, req.Networks, 1)
 		assert.Equal(t, networkName, req.Networks[0])
 
-		assert.Equal(t, 1, len(req.NetworkAliases))
+		assert.Len(t, req.NetworkAliases, 1)
 		assert.Equal(t, map[string][]string{networkName: {"alias"}}, req.NetworkAliases)
 	}
 
@@ -468,10 +468,10 @@ func TestWithSyntheticNetwork(t *testing.T) {
 
 	network.WithNetwork([]string{"alias"}, nw)(&req)
 
-	assert.Equal(t, 1, len(req.Networks))
+	assert.Len(t, req.Networks, 1)
 	assert.Equal(t, networkName, req.Networks[0])
 
-	assert.Equal(t, 1, len(req.NetworkAliases))
+	assert.Len(t, req.NetworkAliases, 1)
 	assert.Equal(t, map[string][]string{networkName: {"alias"}}, req.NetworkAliases)
 
 	// verify that the network is created only once
@@ -554,6 +554,6 @@ func TestWithNewNetworkContextTimeout(t *testing.T) {
 	)(&req)
 
 	// we do not want to fail, just skip the network creation
-	assert.Equal(t, 0, len(req.Networks))
-	assert.Equal(t, 0, len(req.NetworkAliases))
+	assert.Empty(t, req.Networks)
+	assert.Empty(t, req.NetworkAliases)
 }
