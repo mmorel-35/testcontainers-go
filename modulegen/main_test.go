@@ -161,14 +161,14 @@ func TestGenerateWrongModuleName(t *testing.T) {
 	githubWorkflowsTmp := tmpCtx.GithubWorkflowsDir()
 
 	err := os.MkdirAll(examplesTmp, 0o777)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(examplesDocTmp, 0o777)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(githubWorkflowsTmp, 0o777)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialMkdocsConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name string
@@ -203,14 +203,14 @@ func TestGenerateWrongModuleTitle(t *testing.T) {
 	githubWorkflowsTmp := tmpCtx.GithubWorkflowsDir()
 
 	err := os.MkdirAll(examplesTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(examplesDocTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(githubWorkflowsTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialMkdocsConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		title string
@@ -406,15 +406,15 @@ func assertModuleDocContent(t *testing.T, module context.TestcontainersModule, m
 
 	data := sanitiseContent(content)
 	assert.Equal(t, data[0], "# "+title)
-	assert.Equal(t, data[2], `Not available until the next release of testcontainers-go <a href="https://github.com/testcontainers/testcontainers-go"><span class="tc-version">:material-tag: main</span></a>`)
-	assert.Equal(t, data[4], "## Introduction")
+	assert.Equal(t, `Not available until the next release of testcontainers-go <a href="https://github.com/testcontainers/testcontainers-go"><span class="tc-version">:material-tag: main</span></a>`, data[2])
+	assert.Equal(t, "## Introduction", data[4])
 	assert.Equal(t, data[6], "The Testcontainers module for "+title+".")
-	assert.Equal(t, data[8], "## Adding this module to your project dependencies")
+	assert.Equal(t, "## Adding this module to your project dependencies", data[8])
 	assert.Equal(t, data[10], "Please run the following command to add the "+title+" module to your Go dependencies:")
 	assert.Equal(t, data[13], "go get github.com/testcontainers/testcontainers-go/"+module.ParentDir()+"/"+lower)
-	assert.Equal(t, data[18], "<!--codeinclude-->")
+	assert.Equal(t, "<!--codeinclude-->", data[18])
 	assert.Equal(t, data[19], "[Creating a "+title+" container](../../"+module.ParentDir()+"/"+lower+"/examples_test.go) inside_block:run"+title+"Container")
-	assert.Equal(t, data[20], "<!--/codeinclude-->")
+	assert.Equal(t, "<!--/codeinclude-->", data[20])
 	assert.Equal(t, data[24], "The "+title+" module exposes one entrypoint function to create the "+title+" container, and this function receives two parameters:")
 	assert.True(t, strings.HasSuffix(data[27], "(*"+title+"Container, error)"))
 	assert.Equal(t, "for "+title+". E.g. `testcontainers.WithImage(\""+module.Image+"\")`.", data[40])
