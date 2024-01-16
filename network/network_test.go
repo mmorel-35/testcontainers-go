@@ -506,11 +506,11 @@ func TestWithNewNetwork(t *testing.T) {
 		network.WithLabels(map[string]string{"this-is-a-test": "value"}),
 	)(&req)
 
-	assert.Equal(t, 1, len(req.Networks))
+	assert.Len(t, req.Networks, 1)
 
 	networkName := req.Networks[0]
 
-	assert.Equal(t, 1, len(req.NetworkAliases))
+	assert.Len(t, req.NetworkAliases, 1)
 	assert.Equal(t, map[string][]string{networkName: {"alias"}}, req.NetworkAliases)
 
 	client, err := testcontainers.NewDockerClientWithOpts(context.Background())
