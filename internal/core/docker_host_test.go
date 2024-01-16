@@ -426,7 +426,7 @@ func TestInAContainer(t *testing.T) {
 		f := filepath.Join(tmpDir, ".dockerenv-b")
 
 		testFile, err := os.Create(f)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		defer testFile.Close()
 
 		assert.True(t, inAContainer(f))
