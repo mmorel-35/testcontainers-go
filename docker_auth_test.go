@@ -277,7 +277,7 @@ func TestCreateContainerFromPrivateRegistry(t *testing.T) {
 		ContainerRequest: req,
 		Started:          true,
 	})
-	require.Nil(t, err)
+	require.NoError(t, err)
 	terminateContainerOnEnd(t, ctx, redisContainer)
 }
 
