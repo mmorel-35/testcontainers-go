@@ -10,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	tcexec "github.com/testcontainers/testcontainers-go/exec"
 )
@@ -54,7 +55,7 @@ func TestWaitForHealthTimesOutForUnhealthy(t *testing.T) {
 	wg := NewHealthStrategy().WithStartupTimeout(100 * time.Millisecond)
 	err := wg.WaitUntilReady(context.Background(), target)
 
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.True(t, errors.Is(err, context.DeadlineExceeded))
 }
 
@@ -69,7 +70,7 @@ func TestWaitForHealthSucceeds(t *testing.T) {
 	wg := NewHealthStrategy().WithStartupTimeout(100 * time.Millisecond)
 	err := wg.WaitUntilReady(context.Background(), target)
 
-	assert.Nil(t, err)
+	require.NoError(t, err)
 }
 
 // TestWaitForHealthWithNil checks that an initial `nil` Health will not cause a panic,
@@ -93,7 +94,7 @@ func TestWaitForHealthWithNil(t *testing.T) {
 	}(target)
 
 	err := wg.WaitUntilReady(context.Background(), target)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 }
 
 // TestWaitFailsForNilHealth checks that Health always nil fails (but will NOT cause a panic)
@@ -109,7 +110,7 @@ func TestWaitFailsForNilHealth(t *testing.T) {
 		WithPollInterval(100 * time.Millisecond)
 
 	err := wg.WaitUntilReady(context.Background(), target)
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.True(t, errors.Is(err, context.DeadlineExceeded))
 }
 
@@ -124,7 +125,7 @@ func TestWaitForHealthFailsDueToOOMKilledContainer(t *testing.T) {
 		WithPollInterval(100 * time.Millisecond)
 
 	err := wg.WaitUntilReady(context.Background(), target)
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "container crashed with out-of-memory (OOMKilled)")
 }
 
@@ -140,7 +141,7 @@ func TestWaitForHealthFailsDueToExitedContainer(t *testing.T) {
 		WithPollInterval(100 * time.Millisecond)
 
 	err := wg.WaitUntilReady(context.Background(), target)
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "container exited with code 1")
 }
 
@@ -155,6 +156,6 @@ func TestWaitForHealthFailsDueToUnexpectedContainerStatus(t *testing.T) {
 		WithPollInterval(100 * time.Millisecond)
 
 	err := wg.WaitUntilReady(context.Background(), target)
-	assert.NotNil(t, err)
+	require.Error(t, err)
 	assert.EqualError(t, err, "unexpected container status \"dead\"")
 }
