@@ -138,7 +138,6 @@ func NewDockerProvider(ctx context.Context, provOpts ...DockerProviderOption) (*
 		provOpts[idx].ApplyDockerTo(o)
 	}
 
-	ctx := context.Background()
 	c, err := NewDockerClientWithOpts(ctx)
 	if err != nil {
 		return nil, err
