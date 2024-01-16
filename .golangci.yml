@@ -1,5 +1,6 @@
 linters:
   enable:
+    - contextcheck
     - errorlint
     - gci
     - gocritic
