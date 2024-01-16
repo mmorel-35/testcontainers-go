@@ -209,7 +209,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		net, err := provider.CreateNetwork(ctx, NetworkRequest{
 			Name: networkName,
 		})
-		require.Nil(t, err)
+		require.NoError(t, err)
 		defer func() {
 			err := net.Remove(ctx)
 			if err != nil {
@@ -220,7 +220,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		dockerNetwork, err := provider.GetNetwork(ctx, NetworkRequest{
 			Name: networkName,
 		})
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		req := ContainerRequest{
 			Image:    nginxAlpineImage, // alpine image does expose port 80
@@ -238,7 +238,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		inputNetworkingConfig := &network.NetworkingConfig{}
 
 		err = provider.preCreateContainerHook(ctx, req, inputConfig, inputHostConfig, inputNetworkingConfig)
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		// assertions
 
