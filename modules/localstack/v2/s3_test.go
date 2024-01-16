@@ -109,7 +109,7 @@ func TestS3(t *testing.T) {
 			assert.NotNil(t, output)
 
 			buckets := output.Buckets
-			assert.Equal(t, 1, len(buckets))
+			assert.Len(t, buckets, 1)
 			assert.Equal(t, bucketName, *buckets[0].Name)
 		})
 
