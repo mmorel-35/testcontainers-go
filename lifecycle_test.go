@@ -71,7 +71,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		inputNetworkingConfig := &network.NetworkingConfig{}
 
 		err = provider.preCreateContainerHook(ctx, req, inputConfig, inputHostConfig, inputNetworkingConfig)
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		// assertions
 
@@ -151,7 +151,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		inputNetworkingConfig := &network.NetworkingConfig{}
 
 		err = provider.preCreateContainerHook(ctx, req, inputConfig, inputHostConfig, inputNetworkingConfig)
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		// assertions
 
@@ -192,7 +192,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		inputNetworkingConfig := &network.NetworkingConfig{}
 
 		err = provider.preCreateContainerHook(ctx, req, inputConfig, inputHostConfig, inputNetworkingConfig)
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		// assertions
 
@@ -600,7 +600,7 @@ func TestLifecycleHooks_WithDefaultLogger(t *testing.T) {
 	err = c.Terminate(ctx)
 	require.Nil(t, err)
 
-	require.Equal(t, 10, len(dl.data))
+	require.Len(t, dl.data, 10)
 }
 
 func TestLifecycleHooks_WithMultipleHooks(t *testing.T) {
@@ -633,7 +633,7 @@ func TestLifecycleHooks_WithMultipleHooks(t *testing.T) {
 	err = c.Terminate(ctx)
 	require.Nil(t, err)
 
-	require.Equal(t, 20, len(dl.data))
+	require.Len(t, dl.data, 20)
 }
 
 type linesTestLogger struct {
@@ -706,7 +706,7 @@ func TestPrintContainerLogsOnError(t *testing.T) {
 }
 
 func lifecycleHooksIsHonouredFn(t *testing.T, ctx context.Context, container Container, prints []string) {
-	require.Equal(t, 20, len(prints))
+	require.Len(t, prints, 20)
 
 	assert.True(t, strings.HasPrefix(prints[0], "pre-create hook 1: "))
 	assert.True(t, strings.HasPrefix(prints[1], "pre-create hook 2: "))
