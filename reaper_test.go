@@ -446,7 +446,7 @@ func Test_NewReaper(t *testing.T) {
 
 			// checks for reaper's preCreationCallback fields
 			assert.Equal(t, container.NetworkMode(Bridge), provider.hostConfig.NetworkMode, "expected networkMode doesn't match the submitted request")
-			assert.Equal(t, true, provider.hostConfig.AutoRemove, "expected networkMode doesn't match the submitted request")
+			assert.True(t, provider.hostConfig.AutoRemove, "expected networkMode doesn't match the submitted request")
 		})
 	}
 }
