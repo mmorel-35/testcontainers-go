@@ -1478,7 +1478,7 @@ func (p *DockerProvider) getDefaultNetwork(ctx context.Context, cli client.APICl
 
 // containerFromDockerResponse builds a Docker container struct from the response of the Docker API
 func containerFromDockerResponse(ctx context.Context, response types.Container) (*DockerContainer, error) {
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(ctx)
 	if err != nil {
 		return nil, err
 	}
