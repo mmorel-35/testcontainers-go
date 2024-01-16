@@ -71,7 +71,7 @@ func Test_TarDir(t *testing.T) {
 			src := originalSrc
 			if test.abs {
 				absSrc, err := filepath.Abs(src)
-				require.Nil(t, err)
+				require.NoError(t, err)
 
 				src = absSrc
 			}
