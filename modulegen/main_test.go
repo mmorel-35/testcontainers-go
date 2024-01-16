@@ -246,23 +246,23 @@ func TestGenerate(t *testing.T) {
 	githubWorkflowsTmp := tmpCtx.GithubWorkflowsDir()
 
 	err := os.MkdirAll(examplesTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(examplesDocTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(githubWorkflowsTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialMkdocsConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	originalConfig, err := mkdocs.ReadConfig(tmpCtx.MkdocsConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialDependabotConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	originalDependabotConfigUpdates, err := dependabot.GetUpdates(tmpCtx.DependabotConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	module := context.TestcontainersModule{
 		Name:      "foodb4tw",
@@ -273,21 +273,21 @@ func TestGenerate(t *testing.T) {
 	moduleNameLower := module.Lower()
 
 	err = internal.GenerateFiles(tmpCtx, module)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	moduleDirPath := filepath.Join(examplesTmp, moduleNameLower)
 
 	moduleDirFileInfo, err := os.Stat(moduleDirPath)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 	assert.True(t, moduleDirFileInfo.IsDir())
 
 	moduleDocFile := filepath.Join(examplesDocTmp, moduleNameLower+".md")
 	_, err = os.Stat(moduleDocFile)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 
 	mainWorkflowFile := filepath.Join(githubWorkflowsTmp, "ci.yml")
 	_, err = os.Stat(mainWorkflowFile)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 
 	assertModuleDocContent(t, module, moduleDocFile)
 	assertModuleGithubWorkflowContent(t, module, mainWorkflowFile)
