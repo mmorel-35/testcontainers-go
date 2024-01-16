@@ -99,7 +99,7 @@ func Test_LogConsumerGetsCalled(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("never received final log message")
 	}
-	assert.Nil(t, c.StopLogProducer())
+	require.NoError(t, c.StopLogProducer())
 	assert.Equal(t, []string{"ready\n", "echo hello\n", "echo there\n"}, g.Msgs)
 
 	terminateContainerOnEnd(t, ctx, c)
@@ -162,7 +162,7 @@ func Test_ShouldRecognizeLogTypes(t *testing.T) {
 	require.NoError(t, err)
 
 	<-g.Ack
-	assert.Nil(t, c.StopLogProducer())
+	require.NoError(t, c.StopLogProducer())
 
 	assert.Equal(t, map[string]string{
 		StdoutLog: "echo this-is-stdout\n",
