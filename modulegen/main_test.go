@@ -431,14 +431,14 @@ func assertExamplesTestContent(t *testing.T, module context.TestcontainersModule
 
 	data := sanitiseContent(content)
 	assert.Equal(t, data[0], "package "+lower+"_test")
-	assert.Equal(t, data[6], "\t\"github.com/testcontainers/testcontainers-go\"")
+	assert.Equal(t, "\t\"github.com/testcontainers/testcontainers-go\"", data[6])
 	assert.Equal(t, data[7], "\t\"github.com/testcontainers/testcontainers-go/modules/"+lower+"\"")
 	assert.Equal(t, data[10], "func Example"+entrypoint+"() {")
 	assert.Equal(t, data[11], "\t// run"+title+"Container {")
 	assert.Equal(t, data[14], "\t"+lower+"Container, err := "+lower+"."+entrypoint+"(ctx, testcontainers.WithImage(\""+module.Image+"\"))")
-	assert.Equal(t, data[32], "\tfmt.Println(state.Running)")
-	assert.Equal(t, data[34], "\t// Output:")
-	assert.Equal(t, data[35], "\t// true")
+	assert.Equal(t, "\tfmt.Println(state.Running)", data[32])
+	assert.Equal(t, "\t// Output:", data[34])
+	assert.Equal(t, "\t// true", data[35])
 }
 
 // assert content module test
