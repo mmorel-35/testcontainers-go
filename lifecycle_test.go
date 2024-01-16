@@ -22,7 +22,7 @@ import (
 func TestPreCreateModifierHook(t *testing.T) {
 	ctx := context.Background()
 
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(ctx)
 	require.Nil(t, err)
 	defer provider.Close()
 
