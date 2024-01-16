@@ -299,7 +299,7 @@ func TestContainerStateAfterTermination(t *testing.T) {
 		}
 
 		state, err := nginx.State(ctx)
-		assert.Error(t, err, "expected error from container inspect.")
+		require.Error(t, err, "expected error from container inspect.")
 
 		assert.Nil(t, state, "expected nil container inspect.")
 	})
@@ -312,7 +312,7 @@ func TestContainerStateAfterTermination(t *testing.T) {
 		}
 
 		state, err := nginx.State(ctx)
-		assert.NoError(t, err, "unexpected error from container inspect before container termination.")
+		require.NoError(t, err, "unexpected error from container inspect before container termination.")
 
 		assert.NotNil(t, state, "unexpected nil container inspect before container termination.")
 
@@ -323,7 +323,7 @@ func TestContainerStateAfterTermination(t *testing.T) {
 		}
 
 		state, err = nginx.State(ctx)
-		assert.Error(t, err, "expected error from container inspect after container termination.")
+		require.Error(t, err, "expected error from container inspect after container termination.")
 
 		assert.NotNil(t, state, "unexpected nil container inspect after container termination.")
 	})
@@ -2049,9 +2049,9 @@ func TestImageBuiltFromDockerfile_KeepBuiltImage(t *testing.T) {
 			require.NoError(t, err, "terminate container should not fail")
 			_, _, err = cli.ImageInspectWithRaw(ctx, containerImage)
 			if tt.keepBuiltImage {
-				assert.Nil(t, err, "image should still exist")
+				assert.NoError(t, err, "image should still exist")
 			} else {
-				assert.NotNil(t, err, "image should not exist anymore")
+				assert.Error(t, err, "image should not exist anymore")
 			}
 		})
 	}
