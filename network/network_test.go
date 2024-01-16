@@ -334,8 +334,8 @@ func TestMultipleContainersInTheNewNetwork(t *testing.T) {
 	rNets, err := c2.Networks(ctx)
 	require.NoError(t, err)
 
-	assert.Equal(t, 1, len(pNets))
-	assert.Equal(t, 1, len(rNets))
+	assert.Len(t, pNets, 1)
+	assert.Len(t, rNets, 1)
 
 	assert.Equal(t, networkName, pNets[0])
 	assert.Equal(t, networkName, rNets[0])
@@ -422,7 +422,7 @@ func TestWithNetwork(t *testing.T) {
 
 		network.WithNetwork([]string{"alias"}, nw)(&req)
 
-		assert.Equal(t, 1, len(req.Networks))
+		assert.Len(t, req.Networks, 1)
 		assert.Equal(t, networkName, req.Networks[0])
 
 		assert.Equal(t, 1, len(req.NetworkAliases))
@@ -485,7 +485,7 @@ func TestWithSyntheticNetwork(t *testing.T) {
 		Filters: args,
 	})
 	require.NoError(t, err)
-	assert.Len(t, resources, 0) // no Docker network was created
+	assert.Empty(t, resources) // no Docker network was created
 
 	c, err := testcontainers.GenericContainer(context.Background(), req)
 	require.NoError(t, err)
