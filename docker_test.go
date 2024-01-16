@@ -1478,7 +1478,7 @@ func TestDockerCreateContainerWithDirs(t *testing.T) {
 	hostDirName := "testdata"
 
 	abs, err := filepath.Abs(filepath.Join(".", hostDirName))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -1998,7 +1998,7 @@ func TestDockerProviderFindContainerByName(t *testing.T) {
 	terminateContainerOnEnd(t, ctx, c2)
 
 	c, err := provider.findContainerByName(ctx, "test")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	require.NotNil(t, c)
 	assert.Contains(t, c.Names, c1Name)
 }
@@ -2049,9 +2049,9 @@ func TestImageBuiltFromDockerfile_KeepBuiltImage(t *testing.T) {
 			require.NoError(t, err, "terminate container should not fail")
 			_, _, err = cli.ImageInspectWithRaw(ctx, containerImage)
 			if tt.keepBuiltImage {
-				assert.NoError(t, err, "image should still exist")
+				require.NoError(t, err, "image should still exist")
 			} else {
-				assert.Error(t, err, "image should not exist anymore")
+				require.Error(t, err, "image should not exist anymore")
 			}
 		})
 	}
