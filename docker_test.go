@@ -1261,7 +1261,7 @@ func TestContainerCustomPlatformImage(t *testing.T) {
 
 		terminateContainerOnEnd(t, ctx, c)
 
-		assert.Error(t, err)
+		require.Error(t, err)
 	})
 
 	t.Run("specific platform should be propagated", func(t *testing.T) {
