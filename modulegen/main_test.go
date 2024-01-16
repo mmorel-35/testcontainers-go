@@ -160,11 +160,11 @@ func TestGenerateWrongModuleName(t *testing.T) {
 	githubWorkflowsTmp := tmpCtx.GithubWorkflowsDir()
 
 	err := os.MkdirAll(examplesTmp, 0o777)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	err = os.MkdirAll(examplesDocTmp, 0o777)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	err = os.MkdirAll(githubWorkflowsTmp, 0o777)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	err = copyInitialMkdocsConfig(t, tmpCtx)
 	assert.Nil(t, err)
@@ -191,7 +191,7 @@ func TestGenerateWrongModuleName(t *testing.T) {
 		}
 
 		err = internal.GenerateFiles(tmpCtx, module)
-		assert.Error(t, err)
+		require.Error(t, err)
 	}
 }
 
@@ -234,7 +234,7 @@ func TestGenerateWrongModuleTitle(t *testing.T) {
 		}
 
 		err = internal.GenerateFiles(tmpCtx, module)
-		assert.Error(t, err)
+		require.Error(t, err)
 	}
 }
 
@@ -369,7 +369,7 @@ func assertDependabotUpdates(t *testing.T, module context.TestcontainersModule, 
 	modules, err := dependabot.GetUpdates(tmpCtx.DependabotConfigFile())
 	assert.Nil(t, err)
 
-	assert.Equal(t, len(originalConfigUpdates)+1, len(modules))
+	assert.Len(t, modules, len(originalConfigUpdates)+1)
 
 	// the module should be in the dependabot updates
 	found := false
@@ -522,7 +522,7 @@ func assertMkdocsNavItems(t *testing.T, module context.TestcontainersModule, ori
 		expectedEntries = originalConfig.Nav[3].Modules
 	}
 
-	assert.Equal(t, len(expectedEntries)+1, len(navItems))
+	assert.Len(t, navItems, len(expectedEntries)+1)
 
 	// the module should be in the nav
 	found := false
