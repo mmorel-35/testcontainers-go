@@ -2,7 +2,6 @@ package wait
 
 import (
 	"context"
-	"errors"
 	"io"
 	"testing"
 	"time"
