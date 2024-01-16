@@ -267,7 +267,7 @@ func Test_StartStop(t *testing.T) {
 	require.NoError(t, c.StopLogProducer())
 
 	require.NoError(t, c.StartLogProducer(ctx))
-	require.Equal(t, "ready\n",  <-g.Accepted)
+	require.Equal(t, "ready\n", <-g.Accepted)
 	require.Equal(t, "echo mlem\n", <-g.Accepted)
 
 	_, err = http.Get(ep + "/stdout?echo=mlem2")
