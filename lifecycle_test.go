@@ -23,7 +23,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 	ctx := context.Background()
 
 	provider, err := NewDockerProvider()
-	require.Nil(t, err)
+	require.NoError(t, err)
 	defer provider.Close()
 
 	t.Run("No exposed ports", func(t *testing.T) {
@@ -331,8 +331,8 @@ func TestPreCreateModifierHook(t *testing.T) {
 		require.Nil(t, err)
 
 		// assertions
-		assert.Equal(t, inputHostConfig.PortBindings["80/tcp"][0].HostIP, "localhost")
-		assert.Equal(t, inputHostConfig.PortBindings["80/tcp"][0].HostPort, "8080")
+		assert.Equal(t, "localhost", inputHostConfig.PortBindings["80/tcp"][0].HostIP)
+		assert.Equal(t, "8080", inputHostConfig.PortBindings["80/tcp"][0].HostPort)
 	})
 }
 
