@@ -29,14 +29,14 @@ func TestGetDockerConfig(t *testing.T) {
 	// Verify that the default docker config file exists before any test in this suite runs.
 	// Then, we can safely run the tests that rely on it.
 	defaultCfg, err := dockercfg.LoadDefaultConfig()
-	require.Nil(t, err)
+	require.NoError(t, err)
 	require.NotEmpty(t, defaultCfg)
 
 	t.Run("without DOCKER_CONFIG env var retrieves default", func(t *testing.T) {
 		t.Setenv("DOCKER_CONFIG", "")
 
 		cfg, err := getDockerConfig()
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotEmpty(t, cfg)
 
 		assert.Equal(t, defaultCfg, cfg)
@@ -46,7 +46,7 @@ func TestGetDockerConfig(t *testing.T) {
 		t.Setenv("DOCKER_CONFIG", filepath.Join(testDockerConfigDirPath, "non-existing"))
 
 		cfg, err := getDockerConfig()
-		require.NotNil(t, err)
+		require.Error(t, err)
 		require.Empty(t, cfg)
 	})
 
@@ -54,10 +54,10 @@ func TestGetDockerConfig(t *testing.T) {
 		t.Setenv("DOCKER_CONFIG", testDockerConfigDirPath)
 
 		cfg, err := getDockerConfig()
-		require.Nil(t, err)
+		require.NoError(t, err)
 		require.NotEmpty(t, cfg)
 
-		assert.Equal(t, 3, len(cfg.AuthConfigs))
+		assert.Len(t, cfg.AuthConfigs, 3)
 
 		authCfgs := cfg.AuthConfigs
 
@@ -85,7 +85,7 @@ func TestGetDockerConfig(t *testing.T) {
 		require.Nil(t, err)
 		require.NotEmpty(t, cfg)
 
-		assert.Equal(t, 1, len(cfg.AuthConfigs))
+		assert.Len(t, cfg.AuthConfigs, 1)
 
 		authCfgs := cfg.AuthConfigs
 
@@ -284,7 +284,7 @@ func TestCreateContainerFromPrivateRegistry(t *testing.T) {
 func prepareLocalRegistryWithAuth(t *testing.T) {
 	ctx := context.Background()
 	wd, err := os.Getwd()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	// copyDirectoryToContainer {
 	req := ContainerRequest{
 		Image:        "registry:2",
@@ -316,13 +316,13 @@ func prepareLocalRegistryWithAuth(t *testing.T) {
 	}
 
 	registryC, err := GenericContainer(ctx, genContainerReq)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	t.Cleanup(func() {
 		removeImageFromLocalCache(t, "localhost:5001/redis:5.0-alpine")
 	})
 	t.Cleanup(func() {
-		assert.NoError(t, registryC.Terminate(context.Background()))
+		require.NoError(t, registryC.Terminate(context.Background()))
 	})
 
 	_, cancel := context.WithCancel(context.Background())
