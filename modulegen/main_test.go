@@ -309,23 +309,23 @@ func TestGenerateModule(t *testing.T) {
 	githubWorkflowsTmp := tmpCtx.GithubWorkflowsDir()
 
 	err := os.MkdirAll(modulesTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(modulesDocTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	err = os.MkdirAll(githubWorkflowsTmp, 0o777)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialMkdocsConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	originalConfig, err := mkdocs.ReadConfig(tmpCtx.MkdocsConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	err = copyInitialDependabotConfig(t, tmpCtx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	originalDependabotConfigUpdates, err := dependabot.GetUpdates(tmpCtx.DependabotConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	module := context.TestcontainersModule{
 		Name:      "foodb",
@@ -336,21 +336,21 @@ func TestGenerateModule(t *testing.T) {
 	moduleNameLower := module.Lower()
 
 	err = internal.GenerateFiles(tmpCtx, module)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	moduleDirPath := filepath.Join(modulesTmp, moduleNameLower)
 
 	moduleDirFileInfo, err := os.Stat(moduleDirPath)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 	assert.True(t, moduleDirFileInfo.IsDir())
 
 	moduleDocFile := filepath.Join(modulesDocTmp, moduleNameLower+".md")
 	_, err = os.Stat(moduleDocFile)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 
 	mainWorkflowFile := filepath.Join(githubWorkflowsTmp, "ci.yml")
 	_, err = os.Stat(mainWorkflowFile)
-	assert.Nil(t, err) // error nil implies the file exist
+	require.NoError(t, err) // error nil implies the file exist
 
 	assertModuleDocContent(t, module, moduleDocFile)
 	assertModuleGithubWorkflowContent(t, module, mainWorkflowFile)
@@ -368,7 +368,7 @@ func TestGenerateModule(t *testing.T) {
 // assert content in the Dependabot descriptor file
 func assertDependabotUpdates(t *testing.T, module context.TestcontainersModule, originalConfigUpdates dependabot.Updates, tmpCtx context.Context) {
 	modules, err := dependabot.GetUpdates(tmpCtx.DependabotConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	assert.Len(t, modules, len(originalConfigUpdates)+1)
 
@@ -399,7 +399,7 @@ func assertDependabotUpdates(t *testing.T, module context.TestcontainersModule, 
 // assert content module file in the docs
 func assertModuleDocContent(t *testing.T, module context.TestcontainersModule, moduleDocFile string) {
 	content, err := os.ReadFile(moduleDocFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	lower := module.Lower()
 	title := module.Title()
@@ -423,7 +423,7 @@ func assertModuleDocContent(t *testing.T, module context.TestcontainersModule, m
 // assert content module test
 func assertExamplesTestContent(t *testing.T, module context.TestcontainersModule, examplesTestFile string) {
 	content, err := os.ReadFile(examplesTestFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	lower := module.Lower()
 	entrypoint := module.Entrypoint()
@@ -444,7 +444,7 @@ func assertExamplesTestContent(t *testing.T, module context.TestcontainersModule
 // assert content module test
 func assertModuleTestContent(t *testing.T, module context.TestcontainersModule, exampleTestFile string) {
 	content, err := os.ReadFile(exampleTestFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	data := sanitiseContent(content)
 	assert.Equal(t, data[0], "package "+module.Lower())
@@ -455,7 +455,7 @@ func assertModuleTestContent(t *testing.T, module context.TestcontainersModule, 
 // assert content module
 func assertModuleContent(t *testing.T, module context.TestcontainersModule, exampleFile string) {
 	content, err := os.ReadFile(exampleFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	lower := module.Lower()
 	containerName := module.ContainerName()
@@ -475,24 +475,24 @@ func assertModuleContent(t *testing.T, module context.TestcontainersModule, exam
 // assert content GitHub workflow for the module
 func assertModuleGithubWorkflowContent(t *testing.T, module context.TestcontainersModule, moduleWorkflowFile string) {
 	content, err := os.ReadFile(moduleWorkflowFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	data := sanitiseContent(content)
 	ctx := getTestRootContext(t)
 
 	modulesList, err := ctx.GetModules()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "        module: ["+strings.Join(modulesList, ", ")+"]", data[108])
 
 	examplesList, err := ctx.GetExamples()
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "        module: ["+strings.Join(examplesList, ", ")+"]", data[128])
 }
 
 // assert content go.mod
 func assertGoModContent(t *testing.T, module context.TestcontainersModule, tcVersion string, goModFile string) {
 	content, err := os.ReadFile(goModFile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	data := sanitiseContent(content)
 	assert.Equal(t, "module github.com/testcontainers/testcontainers-go/"+module.ParentDir()+"/"+module.Lower(), data[0])
@@ -503,7 +503,7 @@ func assertGoModContent(t *testing.T, module context.TestcontainersModule, tcVer
 // assert content Makefile
 func assertMakefileContent(t *testing.T, module context.TestcontainersModule, makefile string) {
 	content, err := os.ReadFile(makefile)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	data := sanitiseContent(content)
 	assert.Equal(t, data[4], "\t$(MAKE) test-"+module.Lower())
@@ -512,7 +512,7 @@ func assertMakefileContent(t *testing.T, module context.TestcontainersModule, ma
 // assert content in the nav items from mkdocs.yml
 func assertMkdocsNavItems(t *testing.T, module context.TestcontainersModule, originalConfig *mkdocs.Config, tmpCtx context.Context) {
 	config, err := mkdocs.ReadConfig(tmpCtx.MkdocsConfigFile())
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	parentDir := module.ParentDir()
 
