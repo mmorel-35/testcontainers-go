@@ -37,12 +37,12 @@ func TestVault(t *testing.T) {
 	}
 
 	vaultContainer, err := testcontainervault.RunContainer(ctx, opts...)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	// httpHostAddress {
 	hostAddress, err := vaultContainer.HttpHostAddress(ctx)
 	// }
-	assert.Nil(t, err)
+	require.NoError(t, err)
 
 	t.Run("Get secret path", func(t *testing.T) {
 		t.Run("From vault CLI", func(t *testing.T) {
@@ -51,11 +51,11 @@ func TestVault(t *testing.T) {
 			// containerCliRead {
 			exec, reader, err := vaultContainer.Exec(ctx, []string{"vault", "kv", "get", "-format=json", "secret/test1"})
 			// }
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, 0, exec)
 
 			bytes, err := io.ReadAll(reader)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, "bar1", gjson.Get(string(bytes), "data.data.foo1").String())
 		})
@@ -67,11 +67,11 @@ func TestVault(t *testing.T) {
 
 			response, err := http.DefaultClient.Do(request)
 			// }
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			defer response.Body.Close()
 
 			body, err := io.ReadAll(response.Body)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, "bar1", gjson.Get(string(body), "data.data.foo1").String())
 		})
@@ -84,14 +84,14 @@ func TestVault(t *testing.T) {
 				vaultClient.WithAddress(hostAddress),
 				vaultClient.WithRequestTimeout(30*time.Second),
 			)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			err = client.SetToken(token)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			s, err := client.Secrets.KvV2Read(ctx, "test1", vaultClient.WithMountPath("secret"))
 			// }
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, "bar1", s.Data.Data["foo1"])
 		})
 	})
@@ -102,10 +102,10 @@ func TestVault(t *testing.T) {
 				vaultClient.WithAddress(hostAddress),
 				vaultClient.WithRequestTimeout(30*time.Second),
 			)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			err = client.SetToken(token)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			_, err = client.Secrets.KvV2Write(ctx, "test3", schema.KvV2WriteRequest{
 				Data: map[string]any{
@@ -113,10 +113,10 @@ func TestVault(t *testing.T) {
 				},
 			},
 				vaultClient.WithMountPath("secret"))
-			assert.Nil(t, err)
+			require.NoError(t, err)
 
 			s, err := client.Secrets.KvV2Read(ctx, "test3", vaultClient.WithMountPath("secret"))
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, "bar", s.Data.Data["foo"])
 		})
 	})
