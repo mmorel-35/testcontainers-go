@@ -328,7 +328,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 		inputNetworkingConfig := &network.NetworkingConfig{}
 
 		err = provider.preCreateContainerHook(ctx, req, inputConfig, inputHostConfig, inputNetworkingConfig)
-		require.Nil(t, err)
+		require.NoError(t, err)
 
 		// assertions
 		assert.Equal(t, "localhost", inputHostConfig.PortBindings["80/tcp"][0].HostIP)
@@ -543,18 +543,18 @@ func TestLifecycleHooks(t *testing.T) {
 				Reuse:            tt.reuse,
 				Started:          true,
 			})
-			require.Nil(t, err)
+			require.NoError(t, err)
 			require.NotNil(t, c)
 
 			duration := 1 * time.Second
 			err = c.Stop(ctx, &duration)
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			err = c.Start(ctx)
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			err = c.Terminate(ctx)
-			require.Nil(t, err)
+			require.NoError(t, err)
 
 			lifecycleHooksIsHonouredFn(t, ctx, c, prints)
 		})
@@ -587,18 +587,18 @@ func TestLifecycleHooks_WithDefaultLogger(t *testing.T) {
 		ContainerRequest: req,
 		Started:          true,
 	})
-	require.Nil(t, err)
+	require.NoError(t, err)
 	require.NotNil(t, c)
 
 	duration := 1 * time.Second
 	err = c.Stop(ctx, &duration)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	err = c.Start(ctx)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	err = c.Terminate(ctx)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	require.Len(t, dl.data, 10)
 }
@@ -620,18 +620,18 @@ func TestLifecycleHooks_WithMultipleHooks(t *testing.T) {
 		ContainerRequest: req,
 		Started:          true,
 	})
-	require.Nil(t, err)
+	require.NoError(t, err)
 	require.NotNil(t, c)
 
 	duration := 1 * time.Second
 	err = c.Stop(ctx, &duration)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	err = c.Start(ctx)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	err = c.Terminate(ctx)
-	require.Nil(t, err)
+	require.NoError(t, err)
 
 	require.Len(t, dl.data, 20)
 }
