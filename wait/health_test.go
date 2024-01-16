@@ -55,7 +55,7 @@ func TestWaitForHealthTimesOutForUnhealthy(t *testing.T) {
 	err := wg.WaitUntilReady(context.Background(), target)
 
 	require.Error(t, err)
-	assert.ErrorIs(t, err, context.DeadlineExceeded)
+	require.ErrorIs(t, err, context.DeadlineExceeded)
 }
 
 // TestWaitForHealthSucceeds ensures that a healthy container always succeeds.
