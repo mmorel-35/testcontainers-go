@@ -64,7 +64,7 @@ func TestNavItems(t *testing.T) {
 	require.NoError(t, err)
 
 	// we have to remove the index.md file from the examples docs
-	assert.Equal(t, len(examplesDocs)-1, len(examples))
+	assert.Len(t, examples, len(examplesDocs)-1)
 
 	// all example modules exist in the documentation
 	for _, example := range examples {
