@@ -110,14 +110,14 @@ func (t ProviderType) GetProvider(opts ...GenericProviderOption) (GenericProvide
 	switch pt {
 	case ProviderDefault, ProviderDocker:
 		providerOptions := append(Generic2DockerOptions(opts...), WithDefaultBridgeNetwork(Bridge))
-		provider, err := NewDockerProvider(providerOptions...)
+		provider, err := NewDockerProvider(context.Background(), providerOptions...)
 		if err != nil {
 			return nil, fmt.Errorf("%w, failed to create Docker provider", err)
 		}
 		return provider, nil
 	case ProviderPodman:
 		providerOptions := append(Generic2DockerOptions(opts...), WithDefaultBridgeNetwork(Podman))
-		provider, err := NewDockerProvider(providerOptions...)
+		provider, err := NewDockerProvHealtcontext.Background(), providerOptions...)
 		if err != nil {
 			return nil, fmt.Errorf("%w, failed to create Docker provider", err)
 		}
