@@ -241,7 +241,7 @@ func TestContainerWithReaperNetwork(t *testing.T) {
 
 	for i := 0; i < maxNetworksCount; i++ {
 		n, err := network.New(ctx)
-		assert.Nil(t, err)
+		require.NoError(t, err)
 		// use t.Cleanup to run after terminateContainerOnEnd
 		t.Cleanup(func() {
 			assert.NoError(t, n.Remove(ctx))
@@ -273,12 +273,12 @@ func TestContainerWithReaperNetwork(t *testing.T) {
 	containerId := nginx.GetContainerID()
 
 	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
-	assert.Nil(t, err)
+	require.NoError(t, err)
 	defer cli.Close()
 
 	cnt, err := cli.ContainerInspect(ctx, containerId)
-	assert.Nil(t, err)
-	assert.Equal(t, maxNetworksCount, len(cnt.NetworkSettings.Networks))
+	require.NoError(t, err)
+	assert.Len(t, cnt.NetworkSettings.Networks, maxNetworksCount)
 	assert.NotNil(t, cnt.NetworkSettings.Networks[networks[0]])
 	assert.NotNil(t, cnt.NetworkSettings.Networks[networks[1]])
 }
