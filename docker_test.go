@@ -1285,10 +1285,10 @@ func TestContainerCustomPlatformImage(t *testing.T) {
 		defer dockerCli.Close()
 
 		ctr, err := dockerCli.ContainerInspect(ctx, c.GetContainerID())
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		img, _, err := dockerCli.ImageInspectWithRaw(ctx, ctr.Image)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "linux", img.Os)
 		assert.Equal(t, "amd64", img.Architecture)
 	})
