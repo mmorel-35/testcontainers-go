@@ -127,7 +127,7 @@ func (t ProviderType) GetProvider(opts ...GenericProviderOption) (GenericProvide
 }
 
 // NewDockerProvider creates a Docker provider with the EnvClient
-func NewDockerProvider(provOpts ...DockerProviderOption) (*DockerProvider, error) {
+func NewDockerProvider(ctx context.Context, provOpts ...DockerProviderOption) (*DockerProvider, error) {
 	o := &DockerProviderOptions{
 		GenericProviderOptions: &GenericProviderOptions{
 			Logger: Logger,
