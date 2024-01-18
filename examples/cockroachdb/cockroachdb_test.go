@@ -57,9 +57,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 	})
 
 	db, err := sql.Open("pgx", cdbContainer.URI+"/projectmanagement")
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	require.NoError(t, initCockroachDB(ctx, db))
