@@ -21,7 +21,7 @@ type task struct {
 	DateUpdated time.Time  `json:"date_updated"`
 }
 
-func initCockroachDB(ctx context.Context, db sql.DB) error {
+func initCockroachDB(ctx context.Context, db *sql.DB) error {
 	// Actual SQL for initializing the database should probably live elsewhere
 	const query = `CREATE DATABASE projectmanagement;
 		CREATE TABLE projectmanagement.task(
@@ -31,11 +31,10 @@ func initCockroachDB(ctx context.Context, db sql.DB) error {
 			date_created timestamp with time zone not null,
 			date_updated timestamp with time zone not null);`
 	_, err := db.ExecContext(ctx, query)
-
 	return err
 }
 
-func truncateCockroachDB(ctx context.Context, db sql.DB) error {
+func truncateCockroachDB(ctx context.Context, db *sql.DB) error {
 	const query = `TRUNCATE projectmanagement.task`
 	_, err := db.ExecContext(ctx, query)
 	return err
@@ -64,11 +63,13 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = initCockroachDB(ctx, *db)
+	err = initCockroachDB(ctx, db)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer truncateCockroachDB(ctx, *db)
+	defer func(t *testing.T, ctx context.Context, db *sql.DB){
+		require.NoError(t, truncateCockroachDB(ctx, db))
+	}(t, ctx, db)
 
 	now := time.Now()
 
