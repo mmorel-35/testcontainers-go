@@ -61,7 +61,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 	defer db.Close()
 
 	require.NoError(t, initCockroachDB(ctx, db))
-	defer func(t *testing.T, ctx context.Context, db *sql.DB){
+	defer func(t *testing.T, ctx context.Context, db *sql.DB) {
 		require.NoError(t, truncateCockroachDB(ctx, db))
 	}(t, ctx, db)
 
