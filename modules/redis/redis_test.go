@@ -9,7 +9,6 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/testcontainers/testcontainers-go"
@@ -129,7 +128,7 @@ func assertSetsGets(t *testing.T, ctx context.Context, redisContainer *RedisCont
 
 	client := redis.NewClient(options)
 	defer func(t *testing.T, ctx context.Context, client *redis.Client) {
-		assert.NoError(t, flushRedis(ctx, *client))
+		require.NoError(t, flushRedis(ctx, *client))
 	}(t, ctx, client)
 
 	t.Log("pinging redis")
