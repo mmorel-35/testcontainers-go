@@ -49,9 +49,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 	ctx := context.Background()
 
 	cdbContainer, err := startContainer(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	t.Cleanup(func() {
 		if err := cdbContainer.Terminate(ctx); err != nil {
 			t.Fatalf("failed to terminate container: %s", err)
@@ -64,10 +62,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 	}
 	defer db.Close()
 
-	err = initCockroachDB(ctx, db)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, initCockroachDB(ctx, db))
 	defer func(t *testing.T, ctx context.Context, db *sql.DB){
 		require.NoError(t, truncateCockroachDB(ctx, db))
 	}(t, ctx, db)
@@ -86,9 +81,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 		tsk.DateDue,
 		tsk.DateCreated,
 		tsk.DateUpdated)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	// Select data
 	savedTsk := task{ID: tsk.ID}
@@ -97,10 +90,7 @@ func TestIntegrationDBInsertSelect(t *testing.T) {
 		where id = $1`
 	row := db.QueryRowContext(ctx, findQuery, tsk.ID)
 	err = row.Scan(&savedTsk.Description, &savedTsk.DateDue, &savedTsk.DateCreated, &savedTsk.DateUpdated)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	require.NoError(t, err)
 	assert.Equal(t, tsk.ID, savedTsk.ID)
 	assert.Equal(t, tsk.Description, savedTsk.Description)
 	assert.Equal(t, tsk.DateDue, savedTsk.DateDue)
