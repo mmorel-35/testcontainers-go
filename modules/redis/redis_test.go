@@ -128,9 +128,9 @@ func assertSetsGets(t *testing.T, ctx context.Context, redisContainer *RedisCont
 	require.NoError(t, err)
 
 	client := redis.NewClient(options)
-	defer func(ctx context.Context, client redis.Client) {
+	defer func(t *testing.T, ctx context.Context, client *redis.Client) {
 		assert.NoError(t, flushRedis(ctx, *client))
-	}(ctx, client)
+	}(t, ctx, client)
 
 	t.Log("pinging redis")
 	pong, err := client.Ping(ctx).Result()
