@@ -1,12 +1,21 @@
 linters:
   enable:
+    - bodyclose
+    - contextcheck
+    - errcheck
+    - errname
     - errorlint
     - gci
     - gocritic
     - gofumpt
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
     - misspell
     - nonamedreturns
     - testifylint
+    - whitespace
 
 linters-settings:
   errorlint:
