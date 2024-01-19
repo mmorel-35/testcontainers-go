@@ -252,7 +252,6 @@ func assertPluginIsEnabled(t *testing.T, container testcontainers.Container, plu
 	ctx := context.Background()
 
 	for _, plugin := range plugins {
-
 		_, out, err := container.Exec(ctx, []string{"rabbitmq-plugins", "is_enabled", plugin})
 		if err != nil {
 			t.Fatal(err)
