@@ -93,11 +93,10 @@ func TestContainerWithHostNetworkOptions(t *testing.T) {
 		t.Errorf("Expected server endpoint. Got '%v'.", err)
 	}
 
-	resp, err := http.Get(endpoint)
+	_, err = http.Get(endpoint)
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%d'.", err)
 	}
-	defer resp.Body.Close()
 }
 
 func TestContainerWithHostNetworkOptions_UseExposePortsFromImageConfigs(t *testing.T) {
@@ -206,22 +205,20 @@ func TestContainerWithHostNetwork(t *testing.T) {
 	}
 	t.Log(portEndpoint)
 
-	resp, err := http.Get(portEndpoint)
+	_, err = http.Get(portEndpoint)
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%v'.", err)
 	}
-	defer resp.Body.Close()
 
 	host, err := nginxC.Host(ctx)
 	if err != nil {
 		t.Errorf("Expected host %s. Got '%d'.", host, err)
 	}
 
-	resp2, err := http.Get("http://" + host + ":8080")
+	_, err = http.Get("http://" + host + ":8080")
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%v'.", err)
 	}
-	defer resp2.Body.Close()
 }
 
 func TestContainerReturnItsContainerID(t *testing.T) {
