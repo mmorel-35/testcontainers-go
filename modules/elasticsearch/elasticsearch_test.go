@@ -92,7 +92,7 @@ func TestElasticsearch(t *testing.T) {
 
 			httpClient := configureHTTPClient(esContainer)
 
-			req, err := http.NewRequest("GET", esContainer.Settings.Address, nil)
+			req, err := http.NewRequest(http.MethodGet, esContainer.Settings.Address, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -134,7 +134,6 @@ func TestElasticsearch(t *testing.T) {
 					// finish validating the response when the request is unauthorised
 					return
 				}
-
 			}
 
 			// validate response
@@ -179,7 +178,7 @@ func TestElasticsearch8WithoutCredentials(t *testing.T) {
 
 	httpClient := configureHTTPClient(container)
 
-	req, err := http.NewRequest("GET", container.Settings.Address, nil)
+	req, err := http.NewRequest(http.MethodGet, container.Settings.Address, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
