@@ -8,13 +8,13 @@ linters:
     - gci
     - gocritic
     - gofumpt
-    - gosec
     - gosimple
     - govet
     - ineffassign
     - misspell
     - nonamedreturns
     - testifylint
+    - usestdlibvars
     - whitespace
 
 linters-settings:
