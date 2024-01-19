@@ -93,7 +93,7 @@ func TestContainerWithHostNetworkOptions(t *testing.T) {
 		t.Errorf("Expected server endpoint. Got '%v'.", err)
 	}
 
-	resp, err = http.Get(endpoint)
+	resp, err := http.Get(endpoint)
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%d'.", err)
 	}
@@ -206,7 +206,7 @@ func TestContainerWithHostNetwork(t *testing.T) {
 	}
 	t.Log(portEndpoint)
 
-	resp, err = http.Get(portEndpoint)
+	resp, err := http.Get(portEndpoint)
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%v'.", err)
 	}
@@ -217,7 +217,7 @@ func TestContainerWithHostNetwork(t *testing.T) {
 		t.Errorf("Expected host %s. Got '%d'.", host, err)
 	}
 
-	resp2, err = http.Get("http://" + host + ":8080")
+	resp2, err := http.Get("http://" + host + ":8080")
 	if err != nil {
 		t.Errorf("Expected OK response. Got '%v'.", err)
 	}
