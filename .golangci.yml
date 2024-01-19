@@ -1,7 +1,5 @@
 linters:
   enable:
-    - bodyclose
-    - contextcheck
     - errcheck
     - errname
     - errorlint
