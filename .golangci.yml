@@ -11,7 +11,9 @@ linters:
     - ineffassign
     - misspell
     - nonamedreturns
+    - staticcheck
     - testifylint
+    - unused
     - usestdlibvars
     - whitespace
 
