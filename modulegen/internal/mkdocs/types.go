@@ -51,7 +51,6 @@ func (c *Config) addModule(isModule bool, moduleMd string, indexMd string) {
 	}
 
 	if !slices.Contains(mkdocsNavItems, moduleMd) {
-
 		// make sure the index.md is the first element in the list of examples in the nav
 		navItems := make([]string, len(mkdocsNavItems)-1)
 		j := 0
