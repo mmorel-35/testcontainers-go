@@ -452,7 +452,6 @@ func (c *CouchbaseContainer) createBuckets(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-
 		}
 	}
 
