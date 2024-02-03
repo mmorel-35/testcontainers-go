@@ -5,10 +5,14 @@ linters:
     - gci
     - gocritic
     - gofumpt
+    - gosimple
+    - govet
     - ineffassign
     - misspell
     - nonamedreturns
+    - staticcheck
     - testifylint
+    - unused
     - whitespace
 
 linters-settings:
