@@ -134,7 +134,6 @@ func TestElasticsearch(t *testing.T) {
 					// finish validating the response when the request is unauthorised
 					return
 				}
-
 			}
 
 			// validate response
