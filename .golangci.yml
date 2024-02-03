@@ -1,12 +1,15 @@
 linters:
   enable:
+    - errcheck
     - errorlint
     - gci
     - gocritic
     - gofumpt
+    - ineffassign
     - misspell
     - nonamedreturns
     - testifylint
+    - whitespace
 
 linters-settings:
   errorlint:
