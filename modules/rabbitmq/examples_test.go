@@ -188,7 +188,6 @@ func assertPlugins(container testcontainers.Container, plugins ...string) bool {
 	ctx := context.Background()
 
 	for _, plugin := range plugins {
-
 		_, out, err := container.Exec(ctx, []string{"rabbitmq-plugins", "is_enabled", plugin})
 		if err != nil {
 			log.Fatalf("failed to execute command: %s", err)
