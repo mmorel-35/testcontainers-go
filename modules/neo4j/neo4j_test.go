@@ -45,9 +45,7 @@ func TestNeo4j(outer *testing.T) {
 	})
 
 	outer.Run("is configured with custom Neo4j settings", func(t *testing.T) {
-		env := getContainerEnv(t, ctx, ctr)
-
-		require.Containsf(t, env, "NEO4J_dbms_tx__log_rotation_size=42M", "expected to custom setting to be exported but was not")
+		requireEnvVarValue(t, ctx, ctr, "NEO4J_dbms_tx__log_rotation_size", "42M", "expected to custom setting to be exported but was not")
 	})
 }
 
@@ -73,9 +71,7 @@ func TestNeo4jWithEnterpriseLicense(t *testing.T) {
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
-			env := getContainerEnv(t, ctx, ctr)
-
-			require.Containsf(t, env, "NEO4J_ACCEPT_LICENSE_AGREEMENT=yes", "expected to accept license agreement but did not")
+			requireEnvVarValue(t, ctx, ctr, "NEO4J_ACCEPT_LICENSE_AGREEMENT", "yes", "expected to accept license agreement but did not")
 		})
 	}
 }
@@ -120,7 +116,7 @@ func TestNeo4jWithWrongSettings(outer *testing.T) {
 		errorLogs := logger.Logs()
 		require.Containsf(t, errorLogs, `setting "some.key" with value "value1" is now overwritten with value "value2"`+"\n", "expected setting overwrites to be logged")
 		require.Containsf(t, errorLogs, `setting "some.key" with value "value2" is now overwritten with value "value3"`+"\n", "expected setting overwrites to be logged")
-		require.Containsf(t, getContainerEnv(t, ctx, ctr), "NEO4J_some_key=value3", "expected custom setting to be set with last value")
+		requireEnvVarValue(t, ctx, ctr, "NEO4J_some_key", "value3", "expected custom setting to be set with last value")
 	})
 
 	outer.Run("rejects nil logger", func(t *testing.T) {
@@ -165,6 +161,20 @@ func getContainerEnv(t *testing.T, ctx context.Context, container *neo4j.Neo4jCo
 	envVars, err := io.ReadAll(reader)
 	require.NoErrorf(t, err, "expected to read all bytes from env output but did not")
 	return string(envVars)
+}
+
+func requireEnvVarValue(t *testing.T, ctx context.Context, container *neo4j.Neo4jContainer, variable string, value string, message string) {
+	strEnv := getContainerEnv(t, ctx, container)
+	listEnv := strings.Split(strEnv, "\n")
+	require.NotEmpty(t, listEnv)
+	env := make(map[string]string)
+	for _, v := range listEnv {
+		listEnvVar := strings.Split(v, "=")
+		require.Len(t, listEnvVar, 2)
+		env[listEnvVar[0]] = listEnvVar[1]
+	}
+	require.Contains(t, env, variable)
+	require.Equal(t, value, env[variable], message)
 }
 
 const logSeparator = "---$$$---"
