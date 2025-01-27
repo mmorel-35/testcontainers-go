@@ -32,6 +32,8 @@ linters-settings:
       - prefix(github.com/testcontainers)
   nakedret:
     max-func-lines: 0
+  nolintlint:
+    require-specific: true
   revive:
     min-confidence: 0.8
     rules:
