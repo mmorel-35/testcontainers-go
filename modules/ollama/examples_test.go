@@ -86,7 +86,7 @@ func ExampleRun_withModel_llama2_http() {
 	"prompt":"Why is the sky blue?"
 }`
 
-	req, err := http.NewRequest(http.MethodPost, connectionStr+"/api/generate", strings.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, connectionStr+"/api/generate", strings.NewReader(payload))
 	if err != nil {
 		log.Printf("failed to create request: %s", err)
 		return
@@ -319,7 +319,13 @@ func ExampleRun_withImageMount() {
 		return
 	}
 
-	resp, err := http.Get(connectionStr + "/api/tags")
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, connectionStr+"/api/tags", http.NoBody)
+	if err != nil {
+		log.Printf("failed to create request: %s", err)
+		return
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Printf("failed to get request: %s", err)
 		return

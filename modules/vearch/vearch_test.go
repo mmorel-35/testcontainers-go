@@ -23,9 +23,9 @@ func TestVearch(t *testing.T) {
 		restEndpoint, err := ctr.RESTEndpoint(ctx)
 		// }
 		require.NoError(t, err)
-
-		cli := &http.Client{}
-		resp, err := cli.Get(restEndpoint)
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, restEndpoint, http.NoBody)
+		require.NoError(t, err)
+		resp, err := http.DefaultClient.Do(req)
 		require.NoError(t, err)
 		defer resp.Body.Close()
 

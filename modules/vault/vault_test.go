@@ -60,7 +60,7 @@ func TestVault(t *testing.T) {
 
 		t.Run("From HTTP request", func(t *testing.T) {
 			// httpRead {
-			request, _ := http.NewRequest(http.MethodGet, hostAddress+"/v1/secret/data/test1", nil)
+			request, _ := http.NewRequestWithContext(ctx, http.MethodGet, hostAddress+"/v1/secret/data/test1", http.NoBody)
 			request.Header.Add("X-Vault-Token", token)
 
 			response, err := http.DefaultClient.Do(request)
