@@ -10,7 +10,9 @@ formatters:
         - prefix(github.com/testcontainers)
 linters:
   enable:
+    - contextcheck
     - errorlint
+    - fatcontext
     - gocritic
     - govet
     - misspell
