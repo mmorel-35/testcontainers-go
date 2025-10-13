@@ -105,7 +105,7 @@ func reaperDisable(t *testing.T, disabled bool) {
 
 func testContainerStart(t *testing.T) {
 	t.Helper()
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := Run(ctx, nginxAlpineImage, WithExposedPorts(nginxDefaultPort))
 	CleanupContainer(t, ctr)
@@ -116,7 +116,7 @@ func testContainerStart(t *testing.T) {
 func testReaperRunning(t *testing.T) {
 	t.Helper()
 
-	ctx := context.Background()
+	ctx := t.Context()
 	sessionID := core.SessionID()
 	reaperContainer, err := spawner.lookupContainer(ctx, sessionID)
 	require.NoError(t, err)
@@ -160,7 +160,7 @@ func TestContainer(t *testing.T) {
 func testContainerStop(t *testing.T) {
 	t.Helper()
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	nginxA, err := Run(ctx, nginxAlpineImage, WithExposedPorts(nginxDefaultPort))
 	CleanupContainer(t, nginxA)
@@ -183,7 +183,7 @@ func testContainerStop(t *testing.T) {
 // testContainerTerminate tests terminating a container.
 func testContainerTerminate(t *testing.T) {
 	t.Helper()
-	ctx := context.Background()
+	ctx := t.Context()
 
 	nginxA, err := Run(ctx, nginxAlpineImage, WithExposedPorts(nginxDefaultPort))
 	CleanupContainer(t, nginxA)
@@ -203,7 +203,7 @@ func testContainerTerminate(t *testing.T) {
 func Test_NewReaper(t *testing.T) {
 	reaperDisable(t, false)
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("non-privileged", func(t *testing.T) {
 		testNewReaper(ctx, t,
@@ -351,7 +351,7 @@ func Test_ReaperReusedIfHealthy(t *testing.T) {
 
 	SkipIfProviderIsNotHealthy(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	// As other integration tests run with the (shared) Reaper as well, re-use the instance to not interrupt other tests
 	if spawner.instance != nil {
 		t.Cleanup(func() {
@@ -387,7 +387,7 @@ func Test_RecreateReaperIfTerminated(t *testing.T) {
 
 	SkipIfProviderIsNotHealthy(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
@@ -447,7 +447,7 @@ func TestReaper_reuseItFromOtherTestProgramUsingDocker(t *testing.T) {
 
 	SkipIfProviderIsNotHealthy(t)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	// As other integration tests run with the (shared) Reaper as well,
 	// re-use the instance to not interrupt other tests.
 	if spawner.instance != nil {
@@ -495,7 +495,7 @@ func TestReaper_ReuseRunning(t *testing.T) {
 
 	const concurrency = 64
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
 	defer cancel()
 
 	sessionID := SessionID()

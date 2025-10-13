@@ -1,7 +1,6 @@
 package testcontainers
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestImageList(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
@@ -28,11 +27,11 @@ func TestImageList(t *testing.T) {
 		Image: "redis:latest",
 	}
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(t.Context(), req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
-	images, err := provider.ListImages(context.Background())
+	images, err := provider.ListImages(t.Context())
 	require.NoErrorf(t, err, "listing images")
 
 	require.NotEmptyf(t, images, "no images retrieved")
@@ -48,7 +47,7 @@ func TestImageList(t *testing.T) {
 }
 
 func TestSaveImages(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
@@ -63,12 +62,12 @@ func TestSaveImages(t *testing.T) {
 		Image: "redis:latest",
 	}
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(t.Context(), req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
 	output := filepath.Join(t.TempDir(), "images.tar")
-	err = provider.SaveImages(context.Background(), output, req.Image)
+	err = provider.SaveImages(t.Context(), output, req.Image)
 	require.NoErrorf(t, err, "saving image %q", req.Image)
 
 	info, err := os.Stat(output)
@@ -78,7 +77,7 @@ func TestSaveImages(t *testing.T) {
 }
 
 func TestSaveImagesWithOpts(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
@@ -97,13 +96,13 @@ func TestSaveImagesWithOpts(t *testing.T) {
 	p, err := platforms.ParseAll([]string{"linux/amd64"})
 	require.NoError(t, err)
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(t.Context(), req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
 	output := filepath.Join(t.TempDir(), "images.tar")
 	err = provider.SaveImagesWithOpts(
-		context.Background(), output, []string{req.Image}, SaveDockerImageWithPlatforms(p...),
+		t.Context(), output, []string{req.Image}, SaveDockerImageWithPlatforms(p...),
 	)
 	require.NoErrorf(t, err, "saving image %q", req.Image)
 

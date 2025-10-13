@@ -58,7 +58,7 @@ func TestWaitForListeningPortSucceeds(t *testing.T) {
 		WithStartupTimeout(5 * time.Second).
 		WithPollInterval(100 * time.Millisecond)
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 }
 
@@ -103,7 +103,7 @@ func TestWaitForListeningPortInternallySucceeds(t *testing.T) {
 		WithStartupTimeout(5 * time.Second).
 		WithPollInterval(100 * time.Millisecond)
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 }
 
@@ -140,7 +140,7 @@ func TestWaitForMappedPortSucceeds(t *testing.T) {
 		WithStartupTimeout(5 * time.Second).
 		WithPollInterval(100 * time.Millisecond)
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 }
 
@@ -212,7 +212,7 @@ func TestWaitForExposedPortSkipChecksSucceeds(t *testing.T) {
 		WithStartupTimeout(5 * time.Second).
 		WithPollInterval(100 * time.Millisecond)
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 }
 
@@ -241,7 +241,7 @@ func TestHostPortStrategyFailsWhileGettingPortDueToOOMKilledContainer(t *testing
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container crashed with out-of-memory (OOMKilled)")
 	}
 }
@@ -272,7 +272,7 @@ func TestHostPortStrategyFailsWhileGettingPortDueToExitedContainer(t *testing.T)
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container exited with code 1")
 	}
 }
@@ -302,7 +302,7 @@ func TestHostPortStrategyFailsWhileGettingPortDueToUnexpectedContainerStatus(t *
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "unexpected container status \"dead\"")
 	}
 }
@@ -327,7 +327,7 @@ func TestHostPortStrategyFailsWhileExternalCheckingDueToOOMKilledContainer(t *te
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container crashed with out-of-memory (OOMKilled)")
 	}
 }
@@ -353,7 +353,7 @@ func TestHostPortStrategyFailsWhileExternalCheckingDueToExitedContainer(t *testi
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container exited with code 1")
 	}
 }
@@ -378,7 +378,7 @@ func TestHostPortStrategyFailsWhileExternalCheckingDueToUnexpectedContainerStatu
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "unexpected container status \"dead\"")
 	}
 }
@@ -419,7 +419,7 @@ func TestHostPortStrategyFailsWhileInternalCheckingDueToOOMKilledContainer(t *te
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container crashed with out-of-memory (OOMKilled)")
 	}
 }
@@ -461,7 +461,7 @@ func TestHostPortStrategyFailsWhileInternalCheckingDueToExitedContainer(t *testi
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "container exited with code 1")
 	}
 }
@@ -502,7 +502,7 @@ func TestHostPortStrategyFailsWhileInternalCheckingDueToUnexpectedContainerStatu
 		WithPollInterval(100 * time.Millisecond)
 
 	{
-		err := wg.WaitUntilReady(context.Background(), target)
+		err := wg.WaitUntilReady(t.Context(), target)
 		require.ErrorContains(t, err, "unexpected container status \"dead\"")
 	}
 }
@@ -565,7 +565,7 @@ func TestHostPortStrategySucceedsGivenShellIsNotInstalled(t *testing.T) {
 		tclog.SetDefault(oldLogger)
 	})
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 
 	require.Contains(t, buf.String(), "Shell not executable in container, only external port validated")
@@ -629,7 +629,7 @@ func TestHostPortStrategySucceedsGivenShellIsNotFound(t *testing.T) {
 		tclog.SetDefault(oldLogger)
 	})
 
-	err = wg.WaitUntilReady(context.Background(), target)
+	err = wg.WaitUntilReady(t.Context(), target)
 	require.NoError(t, err)
 
 	require.Contains(t, buf.String(), "Shell not found in container")
