@@ -49,7 +49,7 @@ func TestK6(t *testing.T) {
 
 		// Ensure the cache volume is removed as mounts that specify a volume
 		// source as defined by the name are not removed automatically.
-		provider, err := testcontainers.NewDockerProvider()
+		provider, err := testcontainers.NewDockerProvider(ctx)
 		require.NoError(t, err)
 		defer provider.Close()
 

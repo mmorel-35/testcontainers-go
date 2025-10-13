@@ -28,7 +28,7 @@ func Test_LoadImages(t *testing.T) {
 	cli, err := client.NewClientWithOpts(client.WithHost(host), client.WithAPIVersionNegotiation())
 	require.NoError(t, err)
 
-	provider, err := testcontainers.ProviderDocker.GetProvider()
+	provider, err := testcontainers.ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
 	// ensure nginx image is available locally

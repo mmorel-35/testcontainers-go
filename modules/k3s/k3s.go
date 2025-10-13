@@ -184,7 +184,7 @@ func (c *K3sContainer) LoadImages(ctx context.Context, images ...string) error {
 }
 
 func (c *K3sContainer) LoadImagesWithOpts(ctx context.Context, images []string, opts ...testcontainers.SaveImageOption) error {
-	provider, err := testcontainers.ProviderDocker.GetProvider()
+	provider, err := testcontainers.ProviderDocker.GetProvider(ctx)
 	if err != nil {
 		return fmt.Errorf("getting docker provider %w", err)
 	}

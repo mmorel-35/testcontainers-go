@@ -92,6 +92,7 @@ func exposeHostPorts(ctx context.Context, req *ContainerRequest, ports ...int) (
 	// start the SSHD container with the provided options
 	sshdContainer, err := newSshdContainer(ctx, opts...)
 	// Ensure the SSHD container is stopped and removed in case of error.
+	//nolint:contextcheck // TerminateContainer creates its own context internally for cleanup
 	defer func() {
 		if err != nil {
 			err = errors.Join(err, TerminateContainer(sshdContainer))
@@ -150,6 +151,7 @@ func exposeHostPorts(ctx context.Context, req *ContainerRequest, ports ...int) (
 			if ctx.Err() != nil {
 				// Context already canceled, need to create a new one to ensure
 				// the SSH session is closed.
+				//nolint:contextcheck // Intentionally creating a new context for cleanup after parent context is done
 				var cancel context.CancelFunc
 				ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 				defer cancel()
@@ -317,6 +319,7 @@ func newPortForwarder(ctx context.Context, sshDAddr string, sshConfig *ssh.Clien
 		return nil, fmt.Errorf("listening on remote port %d: %w", port, err)
 	}
 
+	//nolint:contextcheck // Creating independent context for port forwarder lifecycle, not related to caller's context
 	ctx, cancel := context.WithCancel(context.Background())
 
 	pf = &portForwarder{
@@ -328,6 +331,7 @@ func newPortForwarder(ctx context.Context, sshDAddr string, sshConfig *ssh.Clien
 		dialTimeout: time.Second * 2,
 	}
 
+	//nolint:contextcheck // Port forwarder runs independently with its own context
 	go pf.run()
 
 	return pf, nil

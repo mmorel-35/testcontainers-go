@@ -35,7 +35,7 @@ func awsSession(ctx context.Context, l *localstack.LocalStackContainer) (*sessio
 		return &session.Session{}, err
 	}
 
-	provider, err := testcontainers.NewDockerProvider()
+	provider, err := testcontainers.NewDockerProvider(ctx)
 	if err != nil {
 		return &session.Session{}, err
 	}

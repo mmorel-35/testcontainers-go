@@ -139,7 +139,7 @@ func TestGenericReusableContainerInSubprocess(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, ctrs, 1)
 
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(context.Background())
 	require.NoError(t, err)
 
 	provider.SetClient(cli)

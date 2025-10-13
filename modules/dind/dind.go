@@ -71,7 +71,7 @@ func (c *Container) Host(ctx context.Context) (string, error) {
 // This temporary file is deleted after the function returns.
 func (c *Container) LoadImage(ctx context.Context, image string) (err error) {
 	var provider testcontainers.GenericProvider
-	if provider, err = testcontainers.ProviderDocker.GetProvider(); err != nil {
+	if provider, err = testcontainers.ProviderDocker.GetProvider(ctx); err != nil {
 		return fmt.Errorf("get docker provider: %w", err)
 	}
 

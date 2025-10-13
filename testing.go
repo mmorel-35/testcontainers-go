@@ -28,7 +28,7 @@ func SkipIfProviderIsNotHealthy(t *testing.T) {
 	}()
 
 	ctx := context.Background()
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	if err != nil {
 		t.Skipf("Docker is not running. Testcontainers can't perform is work without it: %s", err)
 	}
@@ -88,6 +88,8 @@ func (lc *StdoutLogConsumer) Accept(l Log) {
 // container is stopped when the function ends.
 //
 // before any error check. If container is nil, it's a no-op.
+//
+//nolint:contextcheck // Test cleanup uses background context intentionally for cleanup after test completion
 func CleanupContainer(tb testing.TB, ctr Container, options ...TerminateOption) {
 	tb.Helper()
 
@@ -100,6 +102,8 @@ func CleanupContainer(tb testing.TB, ctr Container, options ...TerminateOption) 
 // removed when the test ends.
 // This should be the first call after NewNetwork(...) in a test before
 // any error check. If network is nil, it's a no-op.
+//
+//nolint:contextcheck // Test cleanup uses background context intentionally for cleanup after test completion
 func CleanupNetwork(tb testing.TB, network Network) {
 	tb.Helper()
 

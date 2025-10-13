@@ -162,7 +162,7 @@ func (r *reaperSpawner) lookupContainer(ctx context.Context, sessionID string) (
 	}
 	defer dockerClient.Close()
 
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("new provider: %w", err)
 	}
@@ -281,6 +281,7 @@ func (r *reaperSpawner) retryLocked(ctx context.Context, sessionID string, provi
 	return func() (reaper *Reaper, err error) {
 		reaper, err = r.reuseOrCreate(ctx, sessionID, provider)
 		// Ensure that the reaper is terminated if an error occurred.
+		//nolint:contextcheck // TerminateContainer creates its own context internally for cleanup
 		defer func() {
 			if err != nil {
 				if reaper != nil {
@@ -418,6 +419,7 @@ func (r *reaperSpawner) newReaper(ctx context.Context, sessionID string, provide
 	}
 
 	c, err := provider.RunContainer(ctx, req)
+	//nolint:contextcheck // TerminateContainer creates its own context internally for cleanup
 	defer func() {
 		if err != nil {
 			err = errors.Join(err, TerminateContainer(c))
@@ -455,7 +457,7 @@ type Reaper struct {
 //
 // It returns a channel that can be closed to terminate the connection.
 // Returns an error if config.RyukDisabled is true.
-func (r *Reaper) Connect() (chan bool, error) {
+func (r *Reaper) Connect(ctx context.Context) (chan bool, error) {
 	if config.Read().RyukDisabled {
 		return nil, errReaperDisabled
 	}
@@ -464,7 +466,7 @@ func (r *Reaper) Connect() (chan bool, error) {
 		return termSignal, nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
 	return r.connect(ctx)

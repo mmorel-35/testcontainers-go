@@ -46,7 +46,7 @@ func s3Client(ctx context.Context, l *localstack.LocalStackContainer) (*s3.Clien
 		return nil, err
 	}
 
-	provider, err := testcontainers.NewDockerProvider()
+	provider, err := testcontainers.NewDockerProvider(ctx)
 	if err != nil {
 		return nil, err
 	}

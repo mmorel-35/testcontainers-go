@@ -36,7 +36,7 @@ func Test_LoadImages(t *testing.T) {
 	k8s, err := kubernetes.NewForConfig(restcfg)
 	require.NoError(t, err)
 
-	provider, err := testcontainers.ProviderDocker.GetProvider()
+	provider, err := testcontainers.ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
 	// ensure nginx image is available locally

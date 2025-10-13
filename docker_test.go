@@ -1625,7 +1625,7 @@ func assertExtractedFiles(t *testing.T, ctx context.Context, container Container
 
 func TestDockerProviderFindContainerByName(t *testing.T) {
 	ctx := context.Background()
-	provider, err := NewDockerProvider(WithLogger(log.TestLogger(t)))
+	provider, err := NewDockerProvider(ctx, WithLogger(log.TestLogger(t)))
 	require.NoError(t, err)
 	defer provider.Close()
 
@@ -1667,7 +1667,7 @@ func TestImageBuiltFromDockerfile_KeepBuiltImage(t *testing.T) {
 		t.Run(strconv.FormatBool(tt.keepBuiltImage), func(t *testing.T) {
 			ctx := context.Background()
 			// Set up CLI.
-			provider, err := NewDockerProvider()
+			provider, err := NewDockerProvider(ctx)
 			require.NoError(t, err, "get docker provider should not fail")
 			defer func() { _ = provider.Close() }()
 			cli := provider.Client()
@@ -1788,7 +1788,7 @@ func TestDockerProvider_BuildImage_Retries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewDockerProvider()
+			p, err := NewDockerProvider(context.Background())
 			require.NoError(t, err)
 			m := &errMockCli{err: tt.errReturned}
 			p.client = m
@@ -1848,7 +1848,7 @@ func TestDockerProvider_waitContainerCreation_retries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewDockerProvider()
+			p, err := NewDockerProvider(context.Background())
 			require.NoError(t, err)
 			m := &errMockCli{err: tt.errReturned}
 			p.client = m
@@ -1909,7 +1909,7 @@ func TestDockerProvider_attemptToPullImage_retries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewDockerProvider()
+			p, err := NewDockerProvider(context.Background())
 			require.NoError(t, err)
 			m := &errMockCli{err: tt.errReturned}
 			p.client = m
@@ -1940,7 +1940,7 @@ func TestCustomPrefixTrailingSlashIsProperlyRemovedIfPresent(t *testing.T) {
 // TODO: remove this skip check when context rework is merged alongside [core.DockerEnvFile] removal.
 func Test_Provider_DaemonHost_Issue2897(t *testing.T) {
 	ctx := context.Background()
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(context.Background())
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, provider.Close())

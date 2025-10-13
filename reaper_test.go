@@ -358,7 +358,7 @@ func Test_ReaperReusedIfHealthy(t *testing.T) {
 		})
 	}
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
 	reaper, err := spawner.reaper(context.WithValue(ctx, core.DockerHostContextKey, provider.(*DockerProvider).host), testSessionID, provider)
@@ -386,7 +386,7 @@ func Test_RecreateReaperIfTerminated(t *testing.T) {
 
 	SkipIfProviderIsNotHealthy(t)
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
 	ctx := context.Background()
@@ -455,7 +455,7 @@ func TestReaper_reuseItFromOtherTestProgramUsingDocker(t *testing.T) {
 		})
 	}
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 
 	reaper, err := spawner.reaper(context.WithValue(ctx, core.DockerHostContextKey, provider.(*DockerProvider).host), testSessionID, provider)
@@ -499,7 +499,7 @@ func TestReaper_ReuseRunning(t *testing.T) {
 
 	sessionID := SessionID()
 
-	dockerProvider, err := NewDockerProvider()
+	dockerProvider, err := NewDockerProvider(ctx)
 	require.NoError(t, err, "new docker provider should not fail")
 
 	obtainedReaperContainerIDs := make([]string, concurrency)

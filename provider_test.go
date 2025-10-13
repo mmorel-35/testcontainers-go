@@ -65,7 +65,7 @@ func TestProviderTypeGetProviderAutodetect(t *testing.T) {
 
 			t.Setenv("DOCKER_HOST", tt.DockerHost)
 
-			got, err := tt.tr.GetProvider()
+			got, err := tt.tr.GetProvider(context.Background())
 			require.NoErrorf(t, err, "ProviderType.GetProvider()")
 			provider, ok := got.(*DockerProvider)
 			require.Truef(t, ok, "ProviderType.GetProvider() = %T, want %T", got, &DockerProvider{})

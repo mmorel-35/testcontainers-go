@@ -17,13 +17,13 @@ import (
 )
 
 func TestBuildImageFromDockerfile(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := context.Background()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		// fromDockerfileIncludingRepo {
@@ -51,13 +51,13 @@ func TestBuildImageFromDockerfile(t *testing.T) {
 }
 
 func TestBuildImageFromDockerfile_NoRepo(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := context.Background()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		FromDockerfile: FromDockerfile{
@@ -95,13 +95,13 @@ func TestBuildImageFromDockerfile_BuildError(t *testing.T) {
 }
 
 func TestBuildImageFromDockerfile_NoTag(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := context.Background()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		FromDockerfile: FromDockerfile{

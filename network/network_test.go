@@ -241,7 +241,7 @@ func TestNew_withOptions(t *testing.T) {
 	testcontainers.CleanupContainer(t, nginx)
 	require.NoError(t, err)
 
-	provider, err := testcontainers.ProviderDocker.GetProvider()
+	provider, err := testcontainers.ProviderDocker.GetProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 

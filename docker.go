@@ -316,6 +316,7 @@ func (c *DockerContainer) Terminate(ctx context.Context, opts ...TerminateOption
 	}
 
 	options := NewTerminateOptions(ctx, opts...)
+	//nolint:contextcheck // options.Context() returns the context passed to NewTerminateOptions, not a new context
 	err := c.Stop(options.Context(), options.StopTimeout())
 	if err != nil && !isCleanupSafe(err) {
 		return fmt.Errorf("stop: %w", err)
@@ -797,6 +798,7 @@ func (c *DockerContainer) startLogProduction(ctx context.Context, opts ...LogPro
 
 	// We capture context cancel function to avoid data race with multiple
 	// calls to startLogProduction.
+	//nolint:contextcheck // Goroutine uses c.logProductionCtx internally, cancel function passed for cleanup
 	go func(cancel context.CancelCauseFunc) {
 		// Ensure the context is cancelled when log productions completes
 		// so that GetLogProductionErrorChannel functions correctly.
@@ -933,7 +935,7 @@ func (c *DockerContainer) connectReaper(ctx context.Context) error {
 		return fmt.Errorf("reaper: %w", err)
 	}
 
-	if c.terminationSignal, err = reaper.Connect(); err != nil {
+	if c.terminationSignal, err = reaper.Connect(ctx); err != nil {
 		return fmt.Errorf("reaper connect: %w", err)
 	}
 
@@ -1355,7 +1357,7 @@ func (p *DockerProvider) ReuseOrCreateContainer(ctx context.Context, req Contain
 			return nil, fmt.Errorf("reaper: %w", err)
 		}
 
-		termSignal, err = r.Connect()
+		termSignal, err = r.Connect(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("reaper connect: %w", err)
 		}
@@ -1547,7 +1549,7 @@ func (p *DockerProvider) daemonHostLocked(ctx context.Context) (string, error) {
 			}
 			ip, err := p.getGatewayIP(ctx, defaultNetwork)
 			if err != nil {
-				ip, err = core.DefaultGatewayIP()
+				ip, err = core.DefaultGatewayIP(ctx)
 				if err != nil {
 					ip = "localhost"
 				}
@@ -1595,7 +1597,7 @@ func (p *DockerProvider) CreateNetwork(ctx context.Context, req NetworkRequest) 
 			return nil, fmt.Errorf("reaper: %w", err)
 		}
 
-		termSignal, err = r.Connect()
+		termSignal, err = r.Connect(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("reaper connect: %w", err)
 		}
