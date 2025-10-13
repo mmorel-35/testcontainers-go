@@ -559,7 +559,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 				return nil
 			}),
 		)
-t	//nolint:contextcheck // Test cleanup function doesn't accept context
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: started must be true")
 	})
@@ -588,8 +588,8 @@ t	//nolint:contextcheck // Test cleanup function doesn't accept context
 				req.Dockerfile = "FROM scratch"
 				return nil
 			}),
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: unsupported field: ContainerRequest.FromDockerfile.Dockerfile = \"FROM scratch\"")
 	})
@@ -600,6 +600,7 @@ t	//nolint:contextcheck // Test cleanup function doesn't accept context
 			testBinary,
 			ollama.WithUseLocal(),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 	})
@@ -610,6 +611,7 @@ t	//nolint:contextcheck // Test cleanup function doesn't accept context
 			"prefix-path/"+testBinary,
 			ollama.WithUseLocal(),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 	})
@@ -620,6 +622,7 @@ t	//nolint:contextcheck // Test cleanup function doesn't accept context
 			testBinary+":bad-version",
 			ollama.WithUseLocal(),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, `validate request: ContainerRequest.Image version must be blank or "latest", got: "bad-version"`)
 	})
@@ -630,6 +633,7 @@ t	//nolint:contextcheck // Test cleanup function doesn't accept context
 			"ollama/ollama-not-found",
 			ollama.WithUseLocal(),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, `validate request: invalid image "ollama/ollama-not-found": exec: "ollama-not-found": executable file not found in $PATH`)
 	})
