@@ -15,7 +15,7 @@ import (
 )
 
 func TestMySQL(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mysql.Run(ctx, "mysql:8.0.36")
 	testcontainers.CleanupContainer(t, ctr)
@@ -46,7 +46,7 @@ func TestMySQL(t *testing.T) {
 }
 
 func TestMySQLWithNonRootUserAndEmptyPassword(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mysql.Run(ctx,
 		"mysql:8.0.36",
@@ -58,7 +58,7 @@ func TestMySQLWithNonRootUserAndEmptyPassword(t *testing.T) {
 }
 
 func TestMySQLWithRootUserAndEmptyPassword(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mysql.Run(ctx,
 		"mysql:8.0.36",
@@ -87,7 +87,7 @@ func TestMySQLWithRootUserAndEmptyPassword(t *testing.T) {
 }
 
 func TestMySQLWithScripts(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mysql.Run(ctx,
 		"mysql:8.0.36",

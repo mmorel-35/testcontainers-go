@@ -16,7 +16,7 @@ import (
 )
 
 func TestGrafanaLGTM(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	grafanaLgtmContainer, err := grafanalgtm.Run(ctx, "grafana/otel-lgtm:0.6.0")
 	testcontainers.CleanupContainer(t, grafanaLgtmContainer)

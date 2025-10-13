@@ -12,7 +12,7 @@ import (
 )
 
 func TestOpenSearch(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := opensearch.Run(ctx, "opensearchproject/opensearch:2.11.1")
 	testcontainers.CleanupContainer(t, ctr)

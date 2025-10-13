@@ -557,6 +557,7 @@ func (c *localProcess) Stop(ctx context.Context, d *time.Duration) error {
 func (c *localProcess) Terminate(ctx context.Context, opts ...testcontainers.TerminateOption) error {
 	options := testcontainers.NewTerminateOptions(ctx, opts...)
 	// First try to stop gracefully.
+	//nolint:contextcheck // options.Context() returns the context passed to NewTerminateOptions, not a new context
 	if err := c.Stop(options.Context(), options.StopTimeout()); !c.isCleanupSafe(err) {
 		return fmt.Errorf("stop: %w", err)
 	}

@@ -12,7 +12,7 @@ import (
 )
 
 func TestSolace(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	queueName := "TestQueue"
 	topicName := "Topic/ActualTopic"

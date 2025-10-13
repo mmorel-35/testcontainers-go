@@ -12,7 +12,7 @@ import (
 )
 
 func TestPinecone(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := tcpinecone.Run(ctx, "ghcr.io/pinecone-io/pinecone-local:v0.7.0")
 	testcontainers.CleanupContainer(t, ctr)
@@ -33,7 +33,7 @@ func TestPinecone(t *testing.T) {
 }
 
 func TestPinecone_index(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := tcpinecone.Run(ctx, "ghcr.io/pinecone-io/pinecone-local:v0.7.0")
 	testcontainers.CleanupContainer(t, ctr)

@@ -40,7 +40,7 @@ func TestRun_local(t *testing.T) {
 		t.Skip("local ollama binary not found, skipping")
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	ollamaContainer, err := ollama.Run(
 		ctx,
 		testImage,
@@ -307,13 +307,14 @@ func TestRun_local(t *testing.T) {
 }
 
 func TestRun_localWithCustomLogFile(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	logFile := filepath.Join(t.TempDir(), "server.log")
 
 	t.Run("parent-env", func(t *testing.T) {
 		t.Setenv("OLLAMA_LOGFILE", logFile)
 
 		ollamaContainer, err := ollama.Run(ctx, testImage, ollama.WithUseLocal())
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 
@@ -334,6 +335,7 @@ func TestRun_localWithCustomLogFile(t *testing.T) {
 
 	t.Run("local-env", func(t *testing.T) {
 		ollamaContainer, err := ollama.Run(ctx, testImage, ollama.WithUseLocal("OLLAMA_LOGFILE="+logFile))
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 
@@ -354,12 +356,13 @@ func TestRun_localWithCustomLogFile(t *testing.T) {
 }
 
 func TestRun_localWithCustomHost(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("parent-env", func(t *testing.T) {
 		t.Setenv("OLLAMA_HOST", "127.0.0.1:1234")
 
 		ollamaContainer, err := ollama.Run(ctx, testImage, ollama.WithUseLocal())
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 
@@ -368,6 +371,7 @@ func TestRun_localWithCustomHost(t *testing.T) {
 
 	t.Run("local-env", func(t *testing.T) {
 		ollamaContainer, err := ollama.Run(ctx, testImage, ollama.WithUseLocal("OLLAMA_HOST=127.0.0.1:1234"))
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.NoError(t, err)
 
@@ -438,7 +442,7 @@ func TestRun_localExec(t *testing.T) {
 		t.Skip("local ollama binary not found, skipping")
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ollamaContainer, err := ollama.Run(ctx, testImage, ollama.WithUseLocal())
 	testcontainers.CleanupContainer(t, ollamaContainer)
@@ -529,7 +533,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 		t.Skip("local ollama binary not found, skipping")
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	t.Run("waiting-for-nil", func(t *testing.T) {
 		ollamaContainer, err := ollama.Run(
 			ctx,
@@ -540,6 +544,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 				return nil
 			}),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: ContainerRequest.WaitingFor must be set")
 	})
@@ -554,6 +559,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 				return nil
 			}),
 		)
+t	//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: started must be true")
 	})
@@ -568,6 +574,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 				return nil
 			}),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: ContainerRequest.ExposedPorts must be 11434/tcp got: []")
 	})
@@ -581,6 +588,7 @@ func TestRun_localValidateRequest(t *testing.T) {
 				req.Dockerfile = "FROM scratch"
 				return nil
 			}),
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		)
 		testcontainers.CleanupContainer(t, ollamaContainer)
 		require.EqualError(t, err, "validate request: unsupported field: ContainerRequest.FromDockerfile.Dockerfile = \"FROM scratch\"")

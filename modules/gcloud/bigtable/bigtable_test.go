@@ -15,7 +15,7 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	bigTableContainer, err := tcbigtable.Run(
 		ctx,

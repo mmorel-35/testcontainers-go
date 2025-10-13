@@ -118,7 +118,7 @@ func TestMongoDB(t *testing.T) {
 		t.Run(tc.name, func(tt *testing.T) {
 			tt.Parallel()
 
-			ctx := context.Background()
+			ctx := t.Context()
 
 			mongodbContainer, err := mongodb.Run(ctx, tc.img, tc.opts...)
 			testcontainers.CleanupContainer(t, mongodbContainer)

@@ -22,7 +22,7 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	spannerContainer, err := tcspanner.Run(
 		ctx,

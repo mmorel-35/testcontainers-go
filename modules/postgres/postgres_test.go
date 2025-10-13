@@ -66,7 +66,7 @@ func createSSLCerts(t *testing.T) (*tlscert.Certificate, *tlscert.Certificate, e
 }
 
 func TestPostgres(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	tests := []struct {
 		name  string
@@ -140,7 +140,7 @@ func TestPostgres(t *testing.T) {
 }
 
 func TestContainerWithWaitForSQL(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	port := "5432/tcp"
 	dbURL := func(host string, port nat.Port) string {
@@ -188,7 +188,7 @@ func TestContainerWithWaitForSQL(t *testing.T) {
 }
 
 func TestWithConfigFile(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := postgres.Run(ctx,
 		"postgres:16-alpine",
@@ -212,7 +212,7 @@ func TestWithConfigFile(t *testing.T) {
 }
 
 func TestWithSSL(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	caCert, serverCerts, err := createSSLCerts(t)
 	require.NoError(t, err)
@@ -245,7 +245,7 @@ func TestWithSSL(t *testing.T) {
 }
 
 func TestSSLValidatesKeyMaterialPath(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	_, err := postgres.Run(ctx,
 		"postgres:16-alpine",
@@ -262,7 +262,7 @@ func TestSSLValidatesKeyMaterialPath(t *testing.T) {
 }
 
 func TestWithInitScript(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := postgres.Run(ctx,
 		"postgres:15.2-alpine",
@@ -291,7 +291,7 @@ func TestWithInitScript(t *testing.T) {
 }
 
 func TestWithOrderedInitScript(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := postgres.Run(ctx,
 		"postgres:15.2-alpine",
@@ -368,7 +368,7 @@ func TestSnapshot(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// snapshotAndReset {
-			ctx := context.Background()
+			ctx := t.Context()
 
 			// 1. Start the postgres ctr and run any migrations on it
 			ctr, err := postgres.Run(
@@ -402,16 +402,16 @@ func TestSnapshot(t *testing.T) {
 					require.NoError(t, err)
 				})
 
-				conn, err := pgx.Connect(context.Background(), dbURL)
+				conn, err := pgx.Connect(t.Context(), dbURL)
 				require.NoError(t, err)
-				defer conn.Close(context.Background())
+				defer conn.Close(t.Context())
 
 				_, err = conn.Exec(ctx, "INSERT INTO users(name, age) VALUES ($1, $2)", "test", 42)
 				require.NoError(t, err)
 
 				var name string
 				var age int64
-				err = conn.QueryRow(context.Background(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+				err = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 				require.NoError(t, err)
 
 				require.Equal(t, "test", name)
@@ -425,13 +425,13 @@ func TestSnapshot(t *testing.T) {
 					require.NoError(t, err)
 				})
 
-				conn, err := pgx.Connect(context.Background(), dbURL)
+				conn, err := pgx.Connect(t.Context(), dbURL)
 				require.NoError(t, err)
-				defer conn.Close(context.Background())
+				defer conn.Close(t.Context())
 
 				var name string
 				var age int64
-				err = conn.QueryRow(context.Background(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+				err = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 				require.ErrorIs(t, err, pgx.ErrNoRows)
 			})
 			// }
@@ -440,7 +440,7 @@ func TestSnapshot(t *testing.T) {
 }
 
 func TestSnapshotWithOverrides(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	dbname := "other-db"
 	user := "other-user"
@@ -473,12 +473,12 @@ func TestSnapshotWithOverrides(t *testing.T) {
 		err = ctr.Restore(ctx)
 		require.NoError(t, err)
 
-		conn, err := pgx.Connect(context.Background(), dbURL)
+		conn, err := pgx.Connect(t.Context(), dbURL)
 		require.NoError(t, err)
-		defer conn.Close(context.Background())
+		defer conn.Close(t.Context())
 
 		var count int64
-		err = conn.QueryRow(context.Background(), "SELECT COUNT(1) FROM users").Scan(&count)
+		err = conn.QueryRow(t.Context(), "SELECT COUNT(1) FROM users").Scan(&count)
 		require.NoError(t, err)
 
 		require.Zero(t, count)
@@ -486,7 +486,7 @@ func TestSnapshotWithOverrides(t *testing.T) {
 }
 
 func TestSnapshotDuplicate(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	dbname := "other-db"
 	user := "other-user"
@@ -514,7 +514,7 @@ func TestSnapshotDuplicate(t *testing.T) {
 }
 
 func TestSnapshotWithDockerExecFallback(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// postgresWithSQLDriver {
 	// 1. Start the postgres container and run any migrations on it
@@ -551,16 +551,16 @@ func TestSnapshotWithDockerExecFallback(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		conn, err2 := pgx.Connect(context.Background(), dbURL)
+		conn, err2 := pgx.Connect(t.Context(), dbURL)
 		require.NoError(t, err2)
-		defer conn.Close(context.Background())
+		defer conn.Close(t.Context())
 
 		_, err2 = conn.Exec(ctx, "INSERT INTO users(name, age) VALUES ($1, $2)", "test", 42)
 		require.NoError(t, err2)
 
 		var name string
 		var age int64
-		err2 = conn.QueryRow(context.Background(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+		err2 = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 		require.NoError(t, err2)
 
 		require.Equal(t, "test", name)
@@ -574,13 +574,13 @@ func TestSnapshotWithDockerExecFallback(t *testing.T) {
 			require.NoError(t, err)
 		})
 
-		conn, err2 := pgx.Connect(context.Background(), dbURL)
+		conn, err2 := pgx.Connect(t.Context(), dbURL)
 		require.NoError(t, err2)
-		defer conn.Close(context.Background())
+		defer conn.Close(t.Context())
 
 		var name string
 		var age int64
-		err2 = conn.QueryRow(context.Background(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+		err2 = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 		require.ErrorIs(t, err2, pgx.ErrNoRows)
 	})
 	// }
