@@ -83,8 +83,8 @@ func TestGenericReusableContainer(t *testing.T) {
 			}
 
 			n2, err := Run(ctx, nginxAlpineImage, opts...)
-	//nolint:contextcheck // Test cleanup function doesn't accept context
-	CleanupContainer(t, container)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
+			CleanupContainer(t, n2)
 			tc.errorMatcher(t, err)
 
 			if err == nil {
