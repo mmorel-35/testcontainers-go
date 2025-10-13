@@ -81,13 +81,24 @@ func (lc *StdoutLogConsumer) Accept(l Log) {
 // }
 
 // CleanupContainer is a helper function that schedules the container
-// to be stopped / terminated when the test ends.
+// to be stopped / terminated when the test ends using [testing.TB.Cleanup].
 //
-// This should be called as a defer directly after (before any error check)
-// of [GenericContainer](...) or a modules Run(...) in a test to ensure the
-// container is stopped when the function ends.
+// BEST PRACTICE: Call this immediately after creating a container, BEFORE checking
+// for errors. This ensures cleanup happens even if container creation fails.
 //
-// before any error check. If container is nil, it's a no-op.
+// Example:
+//
+//	func TestMyContainer(t *testing.T) {
+//	    ctx := context.Background()
+//	    container, err := testcontainers.Run(ctx, "nginx:alpine")
+//	    testcontainers.CleanupContainer(t, container)  // Call before error check
+//	    require.NoError(t, err)
+//	    // ... use container ...
+//	}
+//
+// If container is nil, it's a no-op. The cleanup uses t.Cleanup() internally,
+// so it will run after the test completes, even if the test fails or panics.
+// Common cleanup errors (container not found, already terminating) are ignored.
 func CleanupContainer(tb testing.TB, ctr Container, options ...TerminateOption) {
 	tb.Helper()
 
@@ -97,9 +108,23 @@ func CleanupContainer(tb testing.TB, ctr Container, options ...TerminateOption) 
 }
 
 // CleanupNetwork is a helper function that schedules the network to be
-// removed when the test ends.
-// This should be the first call after NewNetwork(...) in a test before
-// any error check. If network is nil, it's a no-op.
+// removed when the test ends using [testing.TB.Cleanup].
+//
+// BEST PRACTICE: Call this immediately after creating a network, BEFORE checking
+// for errors. This ensures cleanup happens even if network creation fails.
+//
+// Example:
+//
+//	func TestMyNetwork(t *testing.T) {
+//	    ctx := context.Background()
+//	    network, err := testcontainers.NewNetwork(ctx)
+//	    testcontainers.CleanupNetwork(t, network)  // Call before error check
+//	    require.NoError(t, err)
+//	    // ... use network ...
+//	}
+//
+// If network is nil, it's a no-op. The cleanup uses t.Cleanup() internally,
+// so it will run after the test completes, even if the test fails or panics.
 func CleanupNetwork(tb testing.TB, network Network) {
 	tb.Helper()
 
