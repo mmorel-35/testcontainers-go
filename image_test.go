@@ -13,7 +13,8 @@ import (
 )
 
 func TestImageList(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := context.Background()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")
@@ -47,7 +48,8 @@ func TestImageList(t *testing.T) {
 }
 
 func TestSaveImages(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := context.Background()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")
@@ -76,7 +78,8 @@ func TestSaveImages(t *testing.T) {
 }
 
 func TestSaveImagesWithOpts(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := context.Background()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
 	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")

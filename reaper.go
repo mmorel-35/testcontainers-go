@@ -321,6 +321,7 @@ func (r *reaperSpawner) reuseOrCreate(ctx context.Context, sessionID string, pro
 
 	// Look for an existing reaper created in the same test session but in a
 	// different test process execution e.g. when running tests in parallel.
+	//nolint:contextcheck // Using background context to lookup existing reaper containers independently
 	container, err := r.lookupContainer(context.Background(), sessionID)
 	if err != nil {
 		if !errors.Is(err, errReaperNotFound) {

@@ -361,9 +361,9 @@ func (c *DockerContainer) applyLifecycleHooks(ctx context.Context, logError bool
 			select {
 			case <-ctx.Done():
 				// Context has timed out so need a new context to get logs.
-				//nolint:contextcheck // Intentionally creating a new context for cleanup after parent context is done
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 				defer cancel()
+				//nolint:contextcheck // Intentionally creating a new context for cleanup after parent context is done
 				c.printLogs(ctx, err)
 			default:
 				c.printLogs(ctx, err)

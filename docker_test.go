@@ -1153,6 +1153,7 @@ func TestDockerContainerCopyFileToContainer(t *testing.T) {
 				WithExposedPorts(nginxDefaultPort),
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 			)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 			require.NoError(t, err)
 
@@ -1226,6 +1227,7 @@ func TestDockerCreateContainerWithFiles(t *testing.T) {
 				WithFiles(tc.files...),
 				WithNoStart(),
 			)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 
 			if err != nil {
@@ -1308,6 +1310,7 @@ func TestDockerCreateContainerWithDirs(t *testing.T) {
 				WithFiles(tc.dir),
 				WithNoStart(),
 			)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 
 			require.Equal(t, (err != nil), tc.hasError)
@@ -1343,6 +1346,7 @@ func TestDockerContainerCopyToContainer(t *testing.T) {
 				WithExposedPorts(nginxDefaultPort),
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 			)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 			require.NoError(t, err)
 
@@ -1547,7 +1551,7 @@ func TestContainerWithNoUserID(t *testing.T) {
 func TestGetGatewayIP(t *testing.T) {
 	// When using docker compose with DinD mode, and using host port or http wait strategy
 	// It's need to invoke GetGatewayIP for get the host
-	provider, err := providerType.GetProvider(WithLogger(log.TestLogger(t)))
+	provider, err := providerType.GetProvider(context.Background(), WithLogger(log.TestLogger(t)))
 	require.NoError(t, err)
 	defer provider.Close()
 

@@ -147,11 +147,11 @@ func exposeHostPorts(ctx context.Context, req *ContainerRequest, ports ...int) (
 	}
 
 	stopHooks := []ContainerHook{
+		//nolint:contextcheck // Function may need to create fresh context if parent is cancelled
 		func(ctx context.Context, _ Container) error {
 			if ctx.Err() != nil {
 				// Context already canceled, need to create a new one to ensure
 				// the SSH session is closed.
-				//nolint:contextcheck // Intentionally creating a new context for cleanup after parent context is done
 				var cancel context.CancelFunc
 				ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 				defer cancel()
@@ -319,7 +319,6 @@ func newPortForwarder(ctx context.Context, sshDAddr string, sshConfig *ssh.Clien
 		return nil, fmt.Errorf("listening on remote port %d: %w", port, err)
 	}
 
-	//nolint:contextcheck // Creating independent context for port forwarder lifecycle, not related to caller's context
 	ctx, cancel := context.WithCancel(context.Background())
 
 	pf = &portForwarder{
