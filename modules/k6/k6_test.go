@@ -1,7 +1,6 @@
 package k6_test
 
 import (
-	"context"
 	"net/url"
 	"path/filepath"
 	"strings"

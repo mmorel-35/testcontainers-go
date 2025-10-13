@@ -1,6 +1,7 @@
 package opensearch_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 

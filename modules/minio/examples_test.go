@@ -1,6 +1,7 @@
 package minio_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 

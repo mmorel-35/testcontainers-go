@@ -1,6 +1,7 @@
 package openldap_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 

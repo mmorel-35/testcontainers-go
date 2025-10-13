@@ -1,7 +1,6 @@
 package spanner_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"testing"

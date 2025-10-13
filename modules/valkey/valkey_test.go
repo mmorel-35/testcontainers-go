@@ -19,7 +19,7 @@ func TestIntegrationSetGet(t *testing.T) {
 	ctx := t.Context()
 
 	valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5")
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 	testcontainers.CleanupContainer(t, valkeyContainer)
 	require.NoError(t, err)
 
@@ -29,7 +29,6 @@ func TestIntegrationSetGet(t *testing.T) {
 func TestValkeyWithConfigFile(t *testing.T) {
 	ctx := t.Context()
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithConfigFile(filepath.Join("testdata", "valkey7.conf")))
 	testcontainers.CleanupContainer(t, valkeyContainer)
 	require.NoError(t, err)
@@ -52,10 +51,9 @@ func TestValkeyWithImage(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-			//nolint:contextcheck // Test cleanup function doesn't accept context
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		t.Run(tt.name, func(t *testing.T) {
 			valkeyContainer, err := tcvalkey.Run(ctx, tt.image, tcvalkey.WithConfigFile(filepath.Join("testdata", "valkey7.conf")))
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.CleanupContainer(t, valkeyContainer)
 			require.NoError(t, err)
 
@@ -65,7 +63,6 @@ func TestValkeyWithImage(t *testing.T) {
 }
 
 func TestValkeyWithLogLevel(t *testing.T) {
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	ctx := t.Context()
 
 	valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithLogLevel(tcvalkey.LogLevelVerbose))
@@ -75,7 +72,6 @@ func TestValkeyWithLogLevel(t *testing.T) {
 	assertSetsGets(t, ctx, valkeyContainer, 10)
 }
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 func TestValkeyWithSnapshotting(t *testing.T) {
 	ctx := t.Context()
 
@@ -85,22 +81,21 @@ func TestValkeyWithSnapshotting(t *testing.T) {
 
 	assertSetsGets(t, ctx, valkeyContainer, 10)
 }
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 func TestRedisWithTLS(t *testing.T) {
 	ctx := t.Context()
 
 	t.Run("mtls-disabled", func(t *testing.T) {
 		valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithTLS())
 			//nolint:contextcheck // Test cleanup function doesn't accept context
+
 		testcontainers.CleanupContainer(t, valkeyContainer)
 		require.NoError(t, err)
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 
 		assertSetsGets(t, ctx, valkeyContainer, 1)
 	})
 
+			//nolint:contextcheck // Test cleanup function doesn't accept context
 	t.Run("mtls-enabled", func(t *testing.T) {
 		valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithTLS(), testcontainers.WithCmdArgs("--tls-auth-clients", "no"))
 		testcontainers.CleanupContainer(t, valkeyContainer)

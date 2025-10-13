@@ -31,6 +31,7 @@ func TestBigQueryWithDataYAML(t *testing.T) {
 			tcbigquery.WithProjectID("test"),
 			tcbigquery.WithDataYAML(bytes.NewReader(dataYaml)),
 		)
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, bigQueryContainer)
 		require.NoError(t, err)
 
@@ -73,6 +74,7 @@ func TestBigQueryWithDataYAML(t *testing.T) {
 			tcbigquery.WithProjectID("test"),
 			tcbigquery.WithDataYAML(bytes.NewReader(dataYaml)),
 			tcbigquery.WithDataYAML(bytes.NewReader(dataYaml)),
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 		)
 		testcontainers.CleanupContainer(t, bigQueryContainer)
 		require.ErrorContains(t, err, `data yaml already exists`)
@@ -88,6 +90,7 @@ func TestBigQueryWithDataYAML(t *testing.T) {
 			"ghcr.io/goccy/bigquery-emulator:0.6.1",
 			noValueOption(), // because --project is always added last, this option will receive `--project` as value, which results in an error
 			tcbigquery.WithProjectID("test"),
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 			tcbigquery.WithDataYAML(bytes.NewReader(dataYaml)),
 		)
 		testcontainers.CleanupContainer(t, bigQueryContainer)

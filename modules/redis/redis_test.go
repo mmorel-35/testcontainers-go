@@ -19,7 +19,7 @@ func TestIntegrationSetGet(t *testing.T) {
 	ctx := t.Context()
 
 	redisContainer, err := tcredis.Run(ctx, "redis:7")
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 	testcontainers.CleanupContainer(t, redisContainer)
 	require.NoError(t, err)
 
@@ -29,7 +29,6 @@ func TestIntegrationSetGet(t *testing.T) {
 func TestRedisWithConfigFile(t *testing.T) {
 	ctx := t.Context()
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	redisContainer, err := tcredis.Run(ctx, "redis:7", tcredis.WithConfigFile(filepath.Join("testdata", "redis7.conf")))
 	testcontainers.CleanupContainer(t, redisContainer)
 	require.NoError(t, err)
@@ -44,7 +43,6 @@ func TestRedisWithConfigFile(t *testing.T) {
 
 func TestRedisWithLogLevel(t *testing.T) {
 	ctx := t.Context()
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 
 	redisContainer, err := tcredis.Run(ctx, "redis:7", tcredis.WithLogLevel(tcredis.LogLevelVerbose))
 	testcontainers.CleanupContainer(t, redisContainer)
@@ -59,7 +57,6 @@ func TestRedisWithLogLevel(t *testing.T) {
 }
 
 func TestRedisWithSnapshotting(t *testing.T) {
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	ctx := t.Context()
 
 	redisContainer, err := tcredis.Run(ctx, "redis:7", tcredis.WithSnapshotting(10, 1))
@@ -75,17 +72,13 @@ func TestRedisWithSnapshotting(t *testing.T) {
 }
 
 func TestRedisWithTLS(t *testing.T) {
-		//nolint:contextcheck // Test cleanup function doesn't accept context
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	ctx := t.Context()
 
 	t.Run("mtls-disabled", func(t *testing.T) {
 		redisContainer, err := tcredis.Run(ctx, "redis:7", tcredis.WithTLS())
 		testcontainers.CleanupContainer(t, redisContainer)
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		assertSetsGets(t, ctx, redisContainer, 1)
 	})
 

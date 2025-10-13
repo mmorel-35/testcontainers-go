@@ -1,6 +1,7 @@
 package mysql_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"

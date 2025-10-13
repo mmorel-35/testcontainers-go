@@ -1,7 +1,6 @@
 package localstack
 
 import (
-	"context"
 	"io"
 	"strings"
 	"testing"

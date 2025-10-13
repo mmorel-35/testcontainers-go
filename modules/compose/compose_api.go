@@ -344,7 +344,7 @@ func (d *DockerCompose) Up(ctx context.Context, opts ...StackUpOption) (err erro
 			if len(termSignals) == 0 {
 				// Need to call Connect at least once to ensure the initial
 				// connection is cleaned up.
-				termSignal, errc := reaper.Connect()
+				termSignal, errc := reaper.Connect(ctx)
 				if errc != nil {
 					err = errors.Join(err, fmt.Errorf("reaper connect: %w", errc))
 				} else {
@@ -364,7 +364,7 @@ func (d *DockerCompose) Up(ctx context.Context, opts ...StackUpOption) (err erro
 
 		// Connect to the reaper and set the termination signal for each network.
 		for _, n := range d.networks {
-			termSignal, err := reaper.Connect()
+			termSignal, err := reaper.Connect(ctx)
 			if err != nil {
 				return fmt.Errorf("reaper connect: %w", err)
 			}
@@ -388,7 +388,7 @@ func (d *DockerCompose) Up(ctx context.Context, opts ...StackUpOption) (err erro
 			}
 
 			if reaper != nil {
-				termSignal, err := reaper.Connect()
+				termSignal, err := reaper.Connect(ctx)
 				if err != nil {
 					return fmt.Errorf("reaper connect: %w", err)
 				}

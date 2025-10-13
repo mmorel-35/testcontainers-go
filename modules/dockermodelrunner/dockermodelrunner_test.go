@@ -29,18 +29,15 @@ func TestRun(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		ctr, err := dockermodelrunner.Run(ctx)
 		//nolint:contextcheck // Test cleanup function doesn't accept context
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+		//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 	})
 
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 	t.Run("success/with-image", func(t *testing.T) {
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		ctr, err := dockermodelrunner.Run(ctx, testcontainers.WithImage(socat.DefaultImage))
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 	})
 
 	//nolint:contextcheck // Test cleanup function doesn'''t accept context
@@ -53,7 +50,7 @@ func TestRun(t *testing.T) {
 
 func TestRun_client(t *testing.T) {
 	skipIfDockerDesktopNotRunning(t)
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 	ctx := t.Context()
 
 	ctr, err := dockermodelrunner.Run(ctx)

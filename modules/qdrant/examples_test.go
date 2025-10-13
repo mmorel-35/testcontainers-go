@@ -1,6 +1,7 @@
 package qdrant_test
 
 import (
+"context"
 	"fmt"
 	"log"
 	"time"

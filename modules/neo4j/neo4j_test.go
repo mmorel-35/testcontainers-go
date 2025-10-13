@@ -21,7 +21,7 @@ func TestNeo4j(outer *testing.T) {
 	ctx := outer.Context()
 
 	ctr, err := setupNeo4j(ctx)
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 	testcontainers.CleanupContainer(outer, ctr)
 	require.NoError(outer, err)
 
@@ -69,8 +69,6 @@ func TestNeo4jWithEnterpriseLicense(t *testing.T) {
 				img,
 				neo4j.WithAdminPassword(testPassword),
 				neo4j.WithAcceptCommercialLicenseAgreement(),
-			//nolint:contextcheck // Test cleanup function doesn't accept context
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 			)
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
@@ -86,7 +84,6 @@ func TestNeo4jWithWrongSettings(outer *testing.T) {
 	outer.Parallel()
 
 	ctx := outer.Context()
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 
 	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	outer.Run("without authentication", func(t *testing.T) {
@@ -96,10 +93,9 @@ func TestNeo4jWithWrongSettings(outer *testing.T) {
 	})
 
 	outer.Run("auth setting outside WithAdminPassword raises error", func(t *testing.T) {
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 		ctr, err := neo4j.Run(ctx,
 			"neo4j:4.4",
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 			neo4j.WithAdminPassword(testPassword),
 			neo4j.WithNeo4jSetting("AUTH", "neo4j/thisisgonnafail"),
 		)
@@ -116,7 +112,7 @@ func TestNeo4jWithWrongSettings(outer *testing.T) {
 			testcontainers.WithLogger(logger), // needs to go before WithNeo4jSetting and WithNeo4jSettings
 			neo4j.WithAdminPassword(testPassword),
 			neo4j.WithNeo4jSetting("some.key", "value1"),
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
+
 			neo4j.WithNeo4jSettings(map[string]string{"some.key": "value2"}),
 			neo4j.WithNeo4jSetting("some.key", "value3"),
 		)

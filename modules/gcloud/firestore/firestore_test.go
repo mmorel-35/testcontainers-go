@@ -1,7 +1,6 @@
 package firestore_test
 
 import (
-	"context"
 	"testing"
 
 	"cloud.google.com/go/datastore"

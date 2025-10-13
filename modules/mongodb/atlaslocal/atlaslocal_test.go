@@ -697,6 +697,7 @@ func newMongoClient(
 	client, err := mongo.Connect(copts...)
 	require.NoError(t, err)
 
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 	return client, func() {
 		err := client.Disconnect(t.Context())
 		require.NoError(t, err, "Failed to disconnect MongoDB client")
