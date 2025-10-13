@@ -489,8 +489,8 @@ func TestShouldStartContainersInParallel(t *testing.T) {
 				testcontainers.WithExposedPorts(nginxDefaultPort),
 				testcontainers.WithWaitStrategy(wait.ForHTTP("/").WithStartupTimeout(10*time.Second)),
 			)
-				//nolint:contextcheck // Test cleanup function doesn't accept context
-				testcontainers.CleanupContainer(t, ctr)
+			//nolint:contextcheck // Test cleanup function doesn't accept context
+			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
 			// mappedPort {
