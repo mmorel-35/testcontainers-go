@@ -17,7 +17,7 @@ import (
 var eventhubsConfig string
 
 func TestEventHubs_topology(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	const azuriteImage = "mcr.microsoft.com/azure-storage/azurite:3.33.0"
 
@@ -50,7 +50,7 @@ func TestEventHubs_topology(t *testing.T) {
 }
 
 func TestEventHubs_withConfig(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	const azuriteImage = "mcr.microsoft.com/azure-storage/azurite:3.33.0"
 
@@ -75,7 +75,7 @@ func TestEventHubs_withConfig(t *testing.T) {
 }
 
 func TestEventHubs_noEULA(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := eventhubs.Run(ctx, "mcr.microsoft.com/azure-messaging/eventhubs-emulator:2.1.0")
 	testcontainers.CleanupContainer(t, ctr)

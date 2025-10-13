@@ -1,7 +1,6 @@
 package kafka_test
 
 import (
-	"context"
 	"strings"
 	"testing"
 

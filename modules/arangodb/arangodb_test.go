@@ -13,7 +13,7 @@ import (
 )
 
 func TestArangoDB(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	const password = "t3stc0ntain3rs!"
 
@@ -33,7 +33,7 @@ func TestArangoDB(t *testing.T) {
 
 	client := arangodb.NewClient(conn)
 
-	versionInfo, err := client.Version(context.Background())
+	versionInfo, err := client.Version(t.Context())
 	require.NoError(t, err)
 	require.Equal(t, "arango", versionInfo.Server)
 }

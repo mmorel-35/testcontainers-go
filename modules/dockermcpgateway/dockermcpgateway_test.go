@@ -1,7 +1,6 @@
 package dockermcpgateway_test
 
 import (
-	"context"
 	"io"
 	"testing"
 

@@ -1,7 +1,6 @@
 package bigtable_test
 
 import (
-	"context"
 	"testing"
 
 	"cloud.google.com/go/bigtable"

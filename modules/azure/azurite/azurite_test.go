@@ -11,7 +11,7 @@ import (
 )
 
 func TestAzurite(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := azurite.Run(ctx, "mcr.microsoft.com/azure-storage/azurite:3.23.0")
 	testcontainers.CleanupContainer(t, ctr)
@@ -21,7 +21,7 @@ func TestAzurite(t *testing.T) {
 }
 
 func TestAzurite_inMemoryPersistence(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("v28-above", func(t *testing.T) {
 		ctr, err := azurite.Run(ctx, "mcr.microsoft.com/azure-storage/azurite:3.28.0", azurite.WithInMemoryPersistence(64))
@@ -37,7 +37,7 @@ func TestAzurite_inMemoryPersistence(t *testing.T) {
 }
 
 func TestAzurite_serviceURL(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := azurite.Run(ctx, "mcr.microsoft.com/azure-storage/azurite:3.23.0")
 	testcontainers.CleanupContainer(t, ctr)

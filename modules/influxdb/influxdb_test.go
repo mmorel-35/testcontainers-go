@@ -1,7 +1,6 @@
 package influxdb_test
 
 import (
-	"context"
 	"encoding/json"
 	"path/filepath"
 	"testing"

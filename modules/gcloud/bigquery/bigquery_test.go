@@ -2,7 +2,6 @@ package bigquery_test
 
 import (
 	"bytes"
-	"context"
 	_ "embed"
 	"errors"
 	"testing"

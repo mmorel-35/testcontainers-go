@@ -1,7 +1,6 @@
 package datastore_test
 
 import (
-	"context"
 	"log"
 	"testing"
 

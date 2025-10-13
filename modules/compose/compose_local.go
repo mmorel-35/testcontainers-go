@@ -164,7 +164,7 @@ func (dc *LocalDockerCompose) applyStrategyToRunningContainer() error {
 		}
 		container := containers[0]
 		strategy := dc.WaitStrategyMap[k]
-		dockerProvider, err := testcontainers.NewDockerProvider(testcontainers.WithLogger(dc.Logger))
+		dockerProvider, err := testcontainers.NewDockerProvider(context.Background(), testcontainers.WithLogger(dc.Logger))
 		if err != nil {
 			return fmt.Errorf("new docker provider: %w", err)
 		}

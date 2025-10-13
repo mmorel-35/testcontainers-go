@@ -1,7 +1,6 @@
 package grafanalgtm_test
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net"
