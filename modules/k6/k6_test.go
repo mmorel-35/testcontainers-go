@@ -49,16 +49,16 @@ func TestK6(t *testing.T) {
 
 		// Ensure the cache volume is removed as mounts that specify a volume
 		// source as defined by the name are not removed automatically.
-		provider, err := testcontainers.NewDockerProvider(context.Background())
+		provider, err := testcontainers.NewDockerProvider(t.Context())
 		require.NoError(t, err)
 		defer provider.Close()
 
-		require.NoError(t, provider.Client().VolumeRemove(context.Background(), cacheMount, true))
+		require.NoError(t, provider.Client().VolumeRemove(t.Context(), cacheMount, true))
 	})
 
 	for _, tc := range testCases {
 		t.Run(tc.title, func(t *testing.T) {
-			ctx := context.Background()
+			ctx := t.Context()
 
 			var options testcontainers.CustomizeRequestOption
 			if !strings.HasPrefix(tc.script, "http") {

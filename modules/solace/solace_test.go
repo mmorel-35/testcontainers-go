@@ -1,7 +1,6 @@
 package solace_test
 
 import (
-	"context"
 	"log"
 	"testing"
 

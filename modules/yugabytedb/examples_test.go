@@ -1,7 +1,6 @@
 package yugabytedb_test
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"log"

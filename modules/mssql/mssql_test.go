@@ -16,12 +16,13 @@ import (
 )
 
 func TestMSSQLServer(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mssql.Run(ctx,
 		"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
 		mssql.WithAcceptEULA(),
 	)
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
@@ -45,13 +46,15 @@ func TestMSSQLServer(t *testing.T) {
 }
 
 func TestMSSQLServerWithMissingEulaOption(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("empty", func(t *testing.T) {
 		ctr, err := mssql.Run(ctx,
 			"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
 			testcontainers.WithAdditionalWaitStrategy(
 				wait.ForLog("The SQL Server End-User License Agreement (EULA) must be accepted")),
+		//nolint:contextcheck // Test cleanup function doesn't accept context
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		)
 		testcontainers.CleanupContainer(t, ctr)
 		require.Error(t, err)
@@ -61,7 +64,9 @@ func TestMSSQLServerWithMissingEulaOption(t *testing.T) {
 		ctr, err := mssql.Run(ctx,
 			"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
 			testcontainers.WithEnv(map[string]string{"ACCEPT_EULA": "yes"}),
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.WithAdditionalWaitStrategy(
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 				wait.ForLog("The SQL Server End-User License Agreement (EULA) must be accepted")),
 		)
 		testcontainers.CleanupContainer(t, ctr)
@@ -70,9 +75,10 @@ func TestMSSQLServerWithMissingEulaOption(t *testing.T) {
 }
 
 func TestMSSQLServerWithConnectionStringParameters(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mssql.Run(ctx,
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
 		mssql.WithAcceptEULA(),
 	)
@@ -100,9 +106,10 @@ func TestMSSQLServerWithConnectionStringParameters(t *testing.T) {
 }
 
 func TestMSSQLServerWithCustomStrongPassword(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mssql.Run(ctx,
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
 		mssql.WithAcceptEULA(),
 		mssql.WithPassword("Strong@Passw0rd"),
@@ -124,10 +131,11 @@ func TestMSSQLServerWithCustomStrongPassword(t *testing.T) {
 
 // tests that a weak password is not accepted by the container due to Microsoft's password strength policy
 func TestMSSQLServerWithInvalidPassword(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := mssql.Run(ctx,
 		"mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04",
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("Password validation failed")),
 		mssql.WithAcceptEULA(),
@@ -144,8 +152,10 @@ var seedSQLContent []byte
 func TestMSSQLServerWithScriptsDDL(t *testing.T) {
 	const password = "MyCustom@Passw0rd"
 
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 	// assertContainer contains the logic for asserting the test
 	assertContainer := func(t *testing.T, ctx context.Context, image string, options ...testcontainers.ContainerCustomizer) {
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		t.Helper()
 
 		ctr, err := mssql.Run(ctx,
@@ -191,7 +201,7 @@ func TestMSSQLServerWithScriptsDDL(t *testing.T) {
 		require.Equal(t, want, got)
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("WithPassword/beforeWithScripts", func(t *testing.T) {
 		assertContainer(t, ctx,

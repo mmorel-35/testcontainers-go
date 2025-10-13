@@ -1,7 +1,6 @@
 package meilisearch_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 

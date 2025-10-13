@@ -31,6 +31,7 @@ func TestScyllaDB(t *testing.T) {
 		"scylladb/scylla:6.2",
 		scylladb.WithShardAwareness(),
 	)
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
@@ -70,6 +71,7 @@ func TestScyllaWithConfig(t *testing.T) {
 		"scylladb/scylla:6.2",
 		scylladb.WithConfig(bytes.NewReader(scyllaYaml)),
 		scylladb.WithShardAwareness(),
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
@@ -115,6 +117,8 @@ func TestScyllaAlternator(t *testing.T) {
 	t.Run("test-with-alternator", func(t *testing.T) {
 		ctr, err := scylladb.Run(ctx,
 			"scylladb/scylla:6.2.2",
+		//nolint:contextcheck // Test cleanup function doesn't accept context
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 			scylladb.WithAlternator(),
 		)
 		testcontainers.CleanupContainer(t, ctr)
@@ -125,7 +129,9 @@ func TestScyllaAlternator(t *testing.T) {
 		requireCreateTable(t, cli)
 	})
 
+		//nolint:contextcheck // Test cleanup function doesn't accept context
 	t.Run("test-without-alternator", func(t *testing.T) {
+	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		ctr, err := scylladb.Run(ctx,
 			"scylladb/scylla:6.2",
 		)

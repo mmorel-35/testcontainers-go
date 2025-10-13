@@ -1,7 +1,6 @@
 package openldap_test
 
 import (
-	"context"
 	"os"
 	"testing"
 

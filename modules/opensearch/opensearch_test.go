@@ -1,7 +1,6 @@
 package opensearch_test
 
 import (
-	"context"
 	"net/http"
 	"testing"
 

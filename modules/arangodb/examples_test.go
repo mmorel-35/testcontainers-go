@@ -1,7 +1,6 @@
 package arangodb_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 

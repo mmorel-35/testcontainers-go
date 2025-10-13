@@ -1,7 +1,6 @@
 package vault_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 

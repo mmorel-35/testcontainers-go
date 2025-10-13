@@ -12,7 +12,7 @@ import (
 )
 
 func TestInbucket(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := Run(ctx, "inbucket/inbucket:sha-2d409bb")
 	testcontainers.CleanupContainer(t, ctr)

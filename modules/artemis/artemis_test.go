@@ -1,7 +1,6 @@
 package artemis_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"testing"

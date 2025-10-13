@@ -1,7 +1,6 @@
 package arangodb_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/arangodb/go-driver/v2/arangodb"

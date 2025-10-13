@@ -1,7 +1,6 @@
 package weaviate_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"

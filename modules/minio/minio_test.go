@@ -1,7 +1,6 @@
 package minio_test
 
 import (
-	"context"
 	"io"
 	"strings"
 	"testing"

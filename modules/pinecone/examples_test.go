@@ -1,7 +1,6 @@
 package pinecone_test
 
 import (
-	"context"
 	"fmt"
 	"log"
 

@@ -1,7 +1,6 @@
 package pinecone_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/pinecone-io/go-pinecone/v2/pinecone"
