@@ -328,8 +328,7 @@ func testNewReaper(ctx context.Context, t *testing.T, cfg config.Config, expecte
 	// an existing reaper instance.
 	spawner := &reaperSpawner{}
 	reaper, err := spawner.reaper(ctx, testSessionID, provider)
-	//nolint:contextcheck // Test cleanup function doesn't accept context
-	cleanupReaper(t, reaper, spawner)
+//nolint:contextcheck // Test cleanup function uses context.Background() internally 	cleanupReaper(t, reaper, spawner)
 	// We should have errored out see mockReaperProvider.RunContainer.
 	require.ErrorIs(t, err, errExpected)
 
@@ -510,8 +509,8 @@ func TestReaper_ReuseRunning(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			spawner := &reaperSpawner{}
+//nolint:contextcheck // Test cleanup function uses context.Background() internally
 			reaper, err := spawner.reaper(ctx, sessionID, dockerProvider)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			cleanupReaper(t, reaper, spawner)
 			require.NoError(t, err)
 

@@ -85,7 +85,6 @@ func TestNeo4jWithWrongSettings(outer *testing.T) {
 
 	ctx := outer.Context()
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	outer.Run("without authentication", func(t *testing.T) {
 		ctr, err := neo4j.Run(ctx, "neo4j:4.4")
 		testcontainers.CleanupContainer(t, ctr)

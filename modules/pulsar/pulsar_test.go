@@ -101,8 +101,6 @@ func TestPulsar(t *testing.T) {
 				"apachepulsar/pulsar:2.10.2",
 				tt.opts...,
 			)
-\	\t\t//nolint:contextcheck // Test cleanup function doesn't accept context
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 			testcontainers.CleanupContainer(t, c)
 			require.NoError(t, err)
 

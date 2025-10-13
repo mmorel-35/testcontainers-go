@@ -28,8 +28,6 @@ func TestRun(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		ctr, err := dockermodelrunner.Run(ctx)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
-		//nolint:contextcheck // Test cleanup function doesn'''t accept context
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 	})
@@ -40,7 +38,6 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 	})
 
-	//nolint:contextcheck // Test cleanup function doesn'''t accept context
 	t.Run("failure/with-image", func(t *testing.T) {
 		ctr, err := dockermodelrunner.Run(ctx, testcontainers.WithImage("alpine:latest"))
 		testcontainers.CleanupContainer(t, ctr)

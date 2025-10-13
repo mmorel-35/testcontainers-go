@@ -57,7 +57,6 @@ func s3Client(ctx context.Context, l *localstack.LocalStackContainer) (*s3.Clien
 		return nil, err
 	}
 
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 	awsCfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(region),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accesskey, secretkey, token)),

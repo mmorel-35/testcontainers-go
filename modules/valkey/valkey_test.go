@@ -53,7 +53,6 @@ func TestValkeyWithImage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			valkeyContainer, err := tcvalkey.Run(ctx, tt.image, tcvalkey.WithConfigFile(filepath.Join("testdata", "valkey7.conf")))
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.CleanupContainer(t, valkeyContainer)
 			require.NoError(t, err)
 
@@ -87,7 +86,6 @@ func TestRedisWithTLS(t *testing.T) {
 
 	t.Run("mtls-disabled", func(t *testing.T) {
 		valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithTLS())
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 
 		testcontainers.CleanupContainer(t, valkeyContainer)
 		require.NoError(t, err)
@@ -95,7 +93,6 @@ func TestRedisWithTLS(t *testing.T) {
 		assertSetsGets(t, ctx, valkeyContainer, 1)
 	})
 
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 	t.Run("mtls-enabled", func(t *testing.T) {
 		valkeyContainer, err := tcvalkey.Run(ctx, "valkey/valkey:7.2.5", tcvalkey.WithTLS(), testcontainers.WithCmdArgs("--tls-auth-clients", "no"))
 		testcontainers.CleanupContainer(t, valkeyContainer)

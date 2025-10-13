@@ -371,10 +371,10 @@ func TestLocalDockerComposeWithVolume(t *testing.T) {
 
 func assertVolumeDoesNotExist(tb testing.TB, volumeName string) {
 	tb.Helper()
-	containerClient, err := testcontainers.NewDockerClientWithOpts(context.Background())
+	containerClient, err := testcontainers.NewDockerClientWithOpts(tb.Context())
 	require.NoErrorf(tb, err, "Failed to get provider")
 
-	volumeList, err := containerClient.VolumeList(context.Background(), volume.ListOptions{Filters: filters.NewArgs(filters.Arg("name", volumeName))})
+	volumeList, err := containerClient.VolumeList(tb.Context(), volume.ListOptions{Filters: filters.NewArgs(filters.Arg("name", volumeName))})
 	require.NoErrorf(tb, err, "Failed to list volumes")
 
 	if len(volumeList.Warnings) > 0 {
@@ -391,10 +391,10 @@ func assertContainerEnvironmentVariables(
 	absent map[string]string,
 ) {
 	tb.Helper()
-	containerClient, err := testcontainers.NewDockerClientWithOpts(context.Background())
+	containerClient, err := testcontainers.NewDockerClientWithOpts(tb.Context())
 	require.NoErrorf(tb, err, "Failed to get provider")
 
-	containers, err := containerClient.ContainerList(context.Background(), container.ListOptions{})
+	containers, err := containerClient.ContainerList(tb.Context(), container.ListOptions{})
 	require.NoErrorf(tb, err, "Failed to list containers")
 	require.NotEmptyf(tb, containers, "container list empty")
 
@@ -411,7 +411,7 @@ containerLoop:
 		}
 	}
 
-	details, err := containerClient.ContainerInspect(context.Background(), containerID)
+	details, err := containerClient.ContainerInspect(tb.Context(), containerID)
 	require.NoErrorf(tb, err, "Failed to inspect container")
 
 	for k, v := range present {

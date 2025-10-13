@@ -63,7 +63,6 @@ func ExampleRun() {
 			options = append(options, testcontainers.RemoveVolumes(cacheMount))
 		}
 
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		if err = testcontainers.TerminateContainer(k6, options...); err != nil {
 			log.Printf("failed to terminate container: %s", err)
 		}

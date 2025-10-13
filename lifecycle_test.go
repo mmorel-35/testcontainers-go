@@ -239,8 +239,7 @@ func TestPreCreateModifierHook(t *testing.T) {
 			Name: networkName,
 		})
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
-		CleanupNetwork(t, net)
+//nolint:contextcheck // Test cleanup function uses context.Background() internally 		CleanupNetwork(t, net)
 
 		dockerNetwork, err := provider.GetNetwork(ctx, NetworkRequest{
 			Name: networkName,
@@ -286,8 +285,8 @@ func TestPreCreateModifierHook(t *testing.T) {
 		net, err := provider.CreateNetwork(ctx, NetworkRequest{
 			Name: networkName,
 		})
+//nolint:contextcheck // Test cleanup function uses context.Background() internally
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		CleanupNetwork(t, net)
 
 		dockerNetwork, err := provider.GetNetwork(ctx, NetworkRequest{

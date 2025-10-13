@@ -175,7 +175,6 @@ func TestClickHouseWithConfigFile(t *testing.T) {
 				clickhouse.WithDatabase(dbname),
 				tC.configOption,
 			)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 

@@ -104,7 +104,6 @@ func TestPostgres(t *testing.T) {
 				postgres.WithPassword(password),
 				postgres.BasicWaitStrategies(),
 			)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
@@ -155,7 +154,6 @@ func TestContainerWithWaitForSQL(t *testing.T) {
 			postgres.WithUsername(user),
 			postgres.WithPassword(password),
 			testcontainers.WithAdditionalWaitStrategy(wait.ForSQL(nat.Port(port), "postgres", dbURL)),
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		)
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
@@ -168,7 +166,6 @@ func TestContainerWithWaitForSQL(t *testing.T) {
 			postgres.WithDatabase(dbname),
 			postgres.WithUsername(user),
 			postgres.WithPassword(password),
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 			testcontainers.WithAdditionalWaitStrategy(wait.ForSQL(nat.Port(port), "postgres", dbURL).WithStartupTimeout(time.Second*5).WithQuery("SELECT 10")),
 		)
 		testcontainers.CleanupContainer(t, ctr)
@@ -404,10 +401,10 @@ func TestSnapshot(t *testing.T) {
 					require.NoError(t, err)
 				})
 
-	\t\t//nolint:contextcheck // Using test-scoped context
+				//nolint:contextcheck // Using test-scoped context
 				conn, err := pgx.Connect(t.Context(), dbURL)
 				require.NoError(t, err)
-	\t\t//nolint:contextcheck // Using test-scoped context
+				//nolint:contextcheck // Using test-scoped context
 				defer conn.Close(t.Context())
 
 				_, err = conn.Exec(ctx, "INSERT INTO users(name, age) VALUES ($1, $2)", "test", 42)
@@ -416,7 +413,7 @@ func TestSnapshot(t *testing.T) {
 				var name string
 				var age int64
 				err = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
-	\t\t//nolint:contextcheck // Using test-scoped context
+				//nolint:contextcheck // Using test-scoped context
 				require.NoError(t, err)
 
 				require.Equal(t, "test", name)

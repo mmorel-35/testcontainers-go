@@ -119,7 +119,6 @@ func TestScyllaAlternator(t *testing.T) {
 
 			scylladb.WithAlternator(),
 		)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -134,7 +133,6 @@ func TestScyllaAlternator(t *testing.T) {
 		ctr, err := scylladb.Run(ctx,
 			"scylladb/scylla:6.2",
 		)
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 

@@ -93,7 +93,6 @@ func TestOllama_withReuse(t *testing.T) {
 
 	t.Run("reuse-container", func(t *testing.T) {
 		ctr2, err := ollama.Run(ctx, "ollama/ollama:0.5.7", testcontainers.WithReuseByName("ollama-container"))
-		//nolint:contextcheck // Test cleanup function doesn't accept context
 		testcontainers.CleanupContainer(t, ctr2)
 		require.NoError(t, err)
 		ctx := t.Context()

@@ -1153,8 +1153,7 @@ func TestDockerContainerCopyFileToContainer(t *testing.T) {
 				WithExposedPorts(nginxDefaultPort),
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 			)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
-			CleanupContainer(t, nginxC)
+//nolint:contextcheck // Test cleanup function uses context.Background() internally 			CleanupContainer(t, nginxC)
 			require.NoError(t, err)
 
 			_ = nginxC.CopyFileToContainer(ctx, filepath.Join(".", "testdata", "hello.sh"), tc.copiedFileName, 700)
@@ -1226,8 +1225,8 @@ func TestDockerCreateContainerWithFiles(t *testing.T) {
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 				WithFiles(tc.files...),
 				WithNoStart(),
+//nolint:contextcheck // Test cleanup function uses context.Background() internally
 			)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 
 			if err != nil {
@@ -1308,9 +1307,9 @@ func TestDockerCreateContainerWithDirs(t *testing.T) {
 				WithExposedPorts(nginxDefaultPort),
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 				WithFiles(tc.dir),
+//nolint:contextcheck // Test cleanup function uses context.Background() internally
 				WithNoStart(),
 			)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 
 			require.Equal(t, (err != nil), tc.hasError)
@@ -1346,7 +1345,6 @@ func TestDockerContainerCopyToContainer(t *testing.T) {
 				WithExposedPorts(nginxDefaultPort),
 				WithWaitStrategy(wait.ForListeningPort(nginxDefaultPort)),
 			)
-			//nolint:contextcheck // Test cleanup function doesn't accept context
 			CleanupContainer(t, nginxC)
 			require.NoError(t, err)
 

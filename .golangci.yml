@@ -25,12 +25,11 @@ linters:
     - thelper
     - usestdlibvars
     - usetesting
-  exclusions:
-    presets:
-      - comments
-      - common-false-positives
-      - legacy
-      - std-error-handling
+  presets:
+    - comments
+    - common-false-positives
+    - legacy
+    - std-error-handling
   settings:
     errorlint:
       asserts: true

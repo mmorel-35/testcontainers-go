@@ -1,7 +1,7 @@
 package registry_test
 
 import (
-"context"
+	"context"
 	"fmt"
 	"log"
 	"path/filepath"
