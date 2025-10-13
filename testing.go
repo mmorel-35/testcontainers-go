@@ -40,8 +40,9 @@ func SkipIfProviderIsNotHealthy(t *testing.T) {
 
 // SkipIfDockerDesktop is a utility function capable of skipping tests
 // if tests are run using Docker Desktop.
-func SkipIfDockerDesktop(t *testing.T, ctx context.Context) {
+func SkipIfDockerDesktop(t *testing.T) {
 	t.Helper()
+	ctx := t.Context()
 	cli, err := NewDockerClientWithOpts(ctx)
 	require.NoErrorf(t, err, "failed to create docker client: %s", err)
 
@@ -55,8 +56,9 @@ func SkipIfDockerDesktop(t *testing.T, ctx context.Context) {
 
 // SkipIfNotDockerDesktop is a utility function capable of skipping tests
 // if tests are not run using Docker Desktop.
-func SkipIfNotDockerDesktop(t *testing.T, ctx context.Context) {
+func SkipIfNotDockerDesktop(t *testing.T) {
 	t.Helper()
+	ctx := t.Context()
 	cli, err := NewDockerClientWithOpts(ctx)
 	require.NoErrorf(t, err, "failed to create docker client: %s", err)
 

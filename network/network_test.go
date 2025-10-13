@@ -440,7 +440,7 @@ func TestContainerWithNetworkModeAndNetworkTogether(t *testing.T) {
 
 	// skipIfDockerDesktop {
 	ctx := t.Context()
-	testcontainers.SkipIfDockerDesktop(t, ctx)
+	testcontainers.SkipIfDockerDesktop(t)
 	// }
 
 	nginx, err := testcontainers.Run(

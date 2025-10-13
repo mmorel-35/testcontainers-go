@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -90,7 +89,6 @@ func TestRootlessDockerSocketPath(t *testing.T) {
 
 		tmpDir := t.TempDir()
 		_ = os.Unsetenv("XDG_RUNTIME_DIR")
-		t.Cleanup(restoreEnvFn)
 
 		runDir := filepath.Join(tmpDir, ".docker", "run")
 		err := createTmpDockerSocket(runDir)
@@ -109,7 +107,6 @@ func TestRootlessDockerSocketPath(t *testing.T) {
 
 		tmpDir := t.TempDir()
 		_ = os.Unsetenv("XDG_RUNTIME_DIR")
-		t.Cleanup(restoreEnvFn)
 
 		desktopDir := filepath.Join(tmpDir, ".docker", "desktop")
 		err := createTmpDockerSocket(desktopDir)

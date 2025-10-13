@@ -42,7 +42,8 @@ func TestBuildImageFromDockerfile(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})
@@ -73,7 +74,8 @@ func TestBuildImageFromDockerfile_NoRepo(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})
@@ -117,7 +119,8 @@ func TestBuildImageFromDockerfile_NoTag(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})

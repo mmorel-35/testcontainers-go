@@ -56,7 +56,7 @@ func TestContainerWithHostNetworkOptions(t *testing.T) {
 	}
 
 	ctx := t.Context()
-	SkipIfDockerDesktop(t, ctx)
+	SkipIfDockerDesktop(t)
 
 	absPath, err := filepath.Abs(filepath.Join("testdata", "nginx-highport.conf"))
 	require.NoError(t, err)
@@ -123,7 +123,7 @@ func TestContainerWithHostNetwork(t *testing.T) {
 	}
 
 	ctx := t.Context()
-	SkipIfDockerDesktop(t, ctx)
+	SkipIfDockerDesktop(t)
 
 	absPath, err := filepath.Abs(filepath.Join("testdata", "nginx-highport.conf"))
 	require.NoError(t, err)
