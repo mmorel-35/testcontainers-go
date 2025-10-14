@@ -108,6 +108,7 @@ func TestGenericContainerShouldReturnRefOnError(t *testing.T) {
 }
 
 func TestGenericReusableContainerInSubprocess(t *testing.T) {
+	ctx := t.Context()
 	wg := sync.WaitGroup{}
 	wg.Add(10)
 	for range 10 {
@@ -126,32 +127,33 @@ func TestGenericReusableContainerInSubprocess(t *testing.T) {
 
 	wg.Wait()
 
-	cli, err := NewDockerClientWithOpts(t.Context())
+	cli, err := NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 
 	f := filters.NewArgs(filters.KeyValuePair{Key: "name", Value: reusableContainerName})
 
-	ctrs, err := cli.ContainerList(t.Context(), container.ListOptions{
+	ctrs, err := cli.ContainerList(ctx, container.ListOptions{
 		All:     true,
 		Filters: f,
 	})
 	require.NoError(t, err)
 	require.Len(t, ctrs, 1)
 
-	provider, err := NewDockerProvider(t.Context())
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 
 	provider.SetClient(cli)
 
-	nginxC, err := provider.ContainerFromType(t.Context(), ctrs[0])
+	nginxC, err := provider.ContainerFromType(ctx, ctrs[0])
 	CleanupContainer(t, nginxC)
 	require.NoError(t, err)
 }
 
 func createReuseContainerInSubprocess(t *testing.T) string {
 	t.Helper()
+	ctx := t.Context()
 	// force verbosity in subprocesses, so that the output is printed
-	cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=TestHelperContainerStarterProcess", "-test.v=true")
+	cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=TestHelperContainerStarterProcess", "-test.v=true")
 	cmd.Env = append(os.Environ(), "GO_WANT_HELPER_PROCESS=1")
 
 	output, err := cmd.CombinedOutput()

@@ -239,7 +239,6 @@ func TestPreCreateModifierHook(t *testing.T) {
 			Name: networkName,
 		})
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function uses context.Background() internally
 		CleanupNetwork(t, net)
 
 		dockerNetwork, err := provider.GetNetwork(ctx, NetworkRequest{
@@ -287,7 +286,6 @@ func TestPreCreateModifierHook(t *testing.T) {
 			Name: networkName,
 		})
 		require.NoError(t, err)
-		//nolint:contextcheck // Test cleanup function uses context.Background() internally
 		CleanupNetwork(t, net)
 
 		dockerNetwork, err := provider.GetNetwork(ctx, NetworkRequest{
@@ -659,6 +657,7 @@ func TestLifecycleHooks_WithDefaultLogger(t *testing.T) {
 }
 
 func TestCombineLifecycleHooks(t *testing.T) {
+	ctx := t.Context()
 	prints := []string{}
 
 	preCreateFunc := func(prefix string, hook string, lifecycleID int, hookID int) func(ctx context.Context, req ContainerRequest) error {
@@ -702,26 +701,26 @@ func TestCombineLifecycleHooks(t *testing.T) {
 	// call all the hooks in the right order, honouring the lifecycle
 
 	req := ContainerRequest{}
-	err := hooks.Creating(t.Context())(req)
+	err := hooks.Creating(ctx)(req)
 	require.NoError(t, err)
 
 	c := &DockerContainer{}
 
-	err = hooks.Created(t.Context())(c)
+	err = hooks.Created(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Starting(t.Context())(c)
+	err = hooks.Starting(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Started(t.Context())(c)
+	err = hooks.Started(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Readied(t.Context())(c)
+	err = hooks.Readied(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Stopping(t.Context())(c)
+	err = hooks.Stopping(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Stopped(t.Context())(c)
+	err = hooks.Stopped(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Terminating(t.Context())(c)
+	err = hooks.Terminating(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Terminated(t.Context())(c)
+	err = hooks.Terminated(ctx)(c)
 	require.NoError(t, err)
 
 	// assertions

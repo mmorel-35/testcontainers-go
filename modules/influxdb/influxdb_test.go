@@ -485,22 +485,23 @@ func TestWithInitDb(t *testing.T) {
 }
 
 func TestWithConfigFile(t *testing.T) {
+	ctx := t.Context()
 	influxVersion := "1.8.10"
 
-	influxDBContainer, err := influxdb.Run(t.Context(),
+	influxDBContainer, err := influxdb.Run(ctx,
 		"influxdb:"+influxVersion,
 		influxdb.WithConfigFile(filepath.Join("testdata", "influxdb.conf")),
 	)
 	testcontainers.CleanupContainer(t, influxDBContainer)
 	require.NoError(t, err)
 
-	if state, err := influxDBContainer.State(t.Context()); err != nil || !state.Running {
+	if state, err := influxDBContainer.State(ctx); err != nil || !state.Running {
 		require.NoError(t, err)
 	}
 
 	/// influxConnectionUrl {
 	cli, err := influxclient.NewHTTPClient(influxclient.HTTPConfig{
-		Addr: influxDBContainer.MustConnectionUrl(t.Context()),
+		Addr: influxDBContainer.MustConnectionUrl(ctx),
 	})
 	// }
 	require.NoError(t, err)

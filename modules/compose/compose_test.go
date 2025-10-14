@@ -1,7 +1,6 @@
 package compose
 
 import (
-	"context"
 	"fmt"
 	"path/filepath"
 	"regexp"

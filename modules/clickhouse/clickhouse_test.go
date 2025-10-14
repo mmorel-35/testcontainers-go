@@ -251,17 +251,18 @@ func performReplicatedCRUD(t *testing.T, conn driver.Conn) ([]Test, error) {
 	t.Helper()
 	return backoff.RetryNotifyWithData(
 		func() ([]Test, error) {
-			err := conn.Exec(t.Context(), "CREATE TABLE replicated_test_table (id UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/mdb.data_transfer_cp_cdc', '{replica}') PRIMARY KEY (id) ORDER BY (id) SETTINGS index_granularity = 8192;")
+			ctx := t.Context()
+			err := conn.Exec(ctx, "CREATE TABLE replicated_test_table (id UInt64) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}/mdb.data_transfer_cp_cdc', '{replica}') PRIMARY KEY (id) ORDER BY (id) SETTINGS index_granularity = 8192;")
 			if err != nil {
 				return nil, err
 			}
 
-			err = conn.Exec(t.Context(), "INSERT INTO replicated_test_table (id) VALUES (1);")
+			err = conn.Exec(ctx, "INSERT INTO replicated_test_table (id) VALUES (1);")
 			if err != nil {
 				return nil, err
 			}
 
-			rows, err := conn.Query(t.Context(), "SELECT * FROM replicated_test_table;")
+			rows, err := conn.Query(ctx, "SELECT * FROM replicated_test_table;")
 			if err != nil {
 				return nil, err
 			}
@@ -290,12 +291,13 @@ func performCRUD(t *testing.T, conn driver.Conn) ([]Test, error) {
 	t.Helper()
 	return backoff.RetryNotifyWithData(
 		func() ([]Test, error) {
-			err := conn.Exec(t.Context(), "create table if not exists test_table (id UInt64) engine = MergeTree PRIMARY KEY (id) ORDER BY (id) SETTINGS index_granularity = 8192;")
+			ctx := t.Context()
+			err := conn.Exec(ctx, "create table if not exists test_table (id UInt64) engine = MergeTree PRIMARY KEY (id) ORDER BY (id) SETTINGS index_granularity = 8192;")
 			if err != nil {
 				return nil, err
 			}
 
-			err = conn.Exec(t.Context(), "INSERT INTO test_table (id) VALUES (1);")
+			err = conn.Exec(ctx, "INSERT INTO test_table (id) VALUES (1);")
 			if err != nil {
 				return nil, err
 			}

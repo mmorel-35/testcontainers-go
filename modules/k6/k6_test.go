@@ -45,14 +45,15 @@ func TestK6(t *testing.T) {
 		if cacheMount == "" {
 			return
 		}
+		ctx := t.Context()
 
 		// Ensure the cache volume is removed as mounts that specify a volume
 		// source as defined by the name are not removed automatically.
-		provider, err := testcontainers.NewDockerProvider(t.Context())
+		provider, err := testcontainers.NewDockerProvider(ctx)
 		require.NoError(t, err)
 		defer provider.Close()
 
-		require.NoError(t, provider.Client().VolumeRemove(t.Context(), cacheMount, true))
+		require.NoError(t, provider.Client().VolumeRemove(ctx, cacheMount, true))
 	})
 
 	for _, tc := range testCases {

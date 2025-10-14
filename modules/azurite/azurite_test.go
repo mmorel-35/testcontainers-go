@@ -1,7 +1,6 @@
 package azurite_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"

@@ -108,7 +108,8 @@ func TestPrependHubRegistrySubstitutor(t *testing.T) {
 func TestSubstituteBuiltImage(t *testing.T) {
 	t.Run("should not use the properties prefix on built images", func(t *testing.T) {
 		config.Reset()
-		c, err := Run(t.Context(), "", WithDockerfile(FromDockerfile{
+		ctx := t.Context()
+		c, err := Run(ctx, "", WithDockerfile(FromDockerfile{
 			Context:    "testdata",
 			Dockerfile: "echo.Dockerfile",
 			Tag:        "my-image",
@@ -117,7 +118,7 @@ func TestSubstituteBuiltImage(t *testing.T) {
 		CleanupContainer(t, c)
 		require.NoError(t, err)
 
-		json, err := c.Inspect(t.Context())
+		json, err := c.Inspect(ctx)
 		require.NoError(t, err)
 
 		require.Equalf(t, "my-registry/my-repo:my-image", json.Config.Image, "expected my-registry/my-repo:my-image, got %s", json.Config.Image)

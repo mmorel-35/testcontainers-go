@@ -1,6 +1,7 @@
 package memcached_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 

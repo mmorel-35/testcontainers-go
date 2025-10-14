@@ -158,13 +158,13 @@ func (r *scyllaAlternatorResolver) ResolveEndpoint(_ context.Context, _ dynamodb
 // getDynamoAlternatorClient returns a new DynamoDB client for the ScyllaDB Alternator.
 func getDynamoAlternatorClient(t *testing.T, c *scylladb.Container) (*dynamodb.Client, error) {
 	t.Helper()
-
-	hostPort, err := c.AlternatorConnectionHost(t.Context())
+	ctx := t.Context()
+	hostPort, err := c.AlternatorConnectionHost(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("connection host: %w", err)
 	}
 
-	cfg, err := config.LoadDefaultConfig(t.Context(), config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
 		Value: aws.Credentials{
 			AccessKeyID:     "SCYLLA_ALTERNATOR_ACCESS_KEY_ID",
 			SecretAccessKey: "SCYLLA_ALTERNATOR_SECRET_ACCESS",
@@ -180,8 +180,8 @@ func getDynamoAlternatorClient(t *testing.T, c *scylladb.Container) (*dynamodb.C
 // requireCreateTable creates a table in the ScyllaDB Alternator, failing the test if an error occurs.
 func requireCreateTable(t *testing.T, client *dynamodb.Client) {
 	t.Helper()
-
-	_, err := client.CreateTable(t.Context(), &dynamodb.CreateTableInput{
+	ctx := t.Context()
+	_, err := client.CreateTable(ctx, &dynamodb.CreateTableInput{
 		TableName: aws.String("demo_table"),
 		KeySchema: []types.KeySchemaElement{
 			{

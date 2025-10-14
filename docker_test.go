@@ -1035,7 +1035,8 @@ func TestContainerWithTmpFs(t *testing.T) {
 
 func TestContainerContextCancellation(t *testing.T) {
 	t.Run("image-not-found/no-propagate-error", func(t *testing.T) {
-		ctr, err := Run(t.Context(), "postgres:nonexistent-version")
+		ctx := t.Context()
+		ctr, err := Run(ctx, "postgres:nonexistent-version")
 		CleanupContainer(t, ctr)
 
 		require.ErrorIs(t, err, errdefs.ErrNotFound, "the error should have been an errdefs.ErrNotFound: %v", err)
@@ -1105,16 +1106,17 @@ func TestContainerWithCustomHostname(t *testing.T) {
 }
 
 func TestContainerInspect_RawInspectIsCleanedOnStop(t *testing.T) {
-	ctr, err := Run(t.Context(), nginxImage)
+	ctx := t.Context()
+	ctr, err := Run(ctx, nginxImage)
 	CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
-	inspect, err := ctr.Inspect(t.Context())
+	inspect, err := ctr.Inspect(ctx)
 	require.NoError(t, err)
 
 	require.NotEmpty(t, inspect.ID)
 
-	require.NoError(t, ctr.Stop(t.Context(), nil))
+	require.NoError(t, ctr.Stop(ctx, nil))
 }
 
 func readHostname(tb testing.TB, containerID string) string {
@@ -1226,7 +1228,6 @@ func TestDockerCreateContainerWithFiles(t *testing.T) {
 				WithFiles(tc.files...),
 				WithNoStart(),
 			)
-			//nolint:contextcheck // Test cleanup function uses context.Background() internally
 			CleanupContainer(t, nginxC)
 
 			if err != nil {
@@ -1548,9 +1549,10 @@ func TestContainerWithNoUserID(t *testing.T) {
 }
 
 func TestGetGatewayIP(t *testing.T) {
+	ctx := t.Context()
 	// When using docker compose with DinD mode, and using host port or http wait strategy
 	// It's need to invoke GetGatewayIP for get the host
-	provider, err := providerType.GetProvider(t.Context(), WithLogger(log.TestLogger(t)))
+	provider, err := providerType.GetProvider(ctx, WithLogger(log.TestLogger(t)))
 	require.NoError(t, err)
 	defer provider.Close()
 
@@ -1559,7 +1561,7 @@ func TestGetGatewayIP(t *testing.T) {
 		t.Skip("provider is not a DockerProvider")
 	}
 
-	ip, err := dockerProvider.GetGatewayIP(t.Context())
+	ip, err := dockerProvider.GetGatewayIP(ctx)
 	require.NoError(t, err)
 	require.NotEmpty(t, ip)
 }
@@ -1791,13 +1793,14 @@ func TestDockerProvider_BuildImage_Retries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewDockerProvider(t.Context())
+			ctx := t.Context()
+			p, err := NewDockerProvider(ctx)
 			require.NoError(t, err)
 			m := &errMockCli{err: tt.errReturned}
 			p.client = m
 
 			// give a chance to retry
-			ctx, cancel := context.WithTimeout(t.Context(), 1*time.Second)
+			ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 			defer cancel()
 			_, err = p.BuildImage(ctx, &ContainerRequest{
 				FromDockerfile: FromDockerfile{
@@ -1912,13 +1915,14 @@ func TestDockerProvider_attemptToPullImage_retries(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := NewDockerProvider(t.Context())
+			ctx := t.Context()
+			p, err := NewDockerProvider(ctx)
 			require.NoError(t, err)
 			m := &errMockCli{err: tt.errReturned}
 			p.client = m
 
 			// give a chance to retry
-			ctx, cancel := context.WithTimeout(t.Context(), 1*time.Second)
+			ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 			defer cancel()
 			_ = p.attemptToPullImage(ctx, "someTag", image.PullOptions{})
 
@@ -1929,10 +1933,10 @@ func TestDockerProvider_attemptToPullImage_retries(t *testing.T) {
 }
 
 func TestCustomPrefixTrailingSlashIsProperlyRemovedIfPresent(t *testing.T) {
+	ctx := t.Context()
 	hubPrefixWithTrailingSlash := "public.ecr.aws/"
 	dockerImage := "amazonlinux/amazonlinux:2023"
 
-	ctx := t.Context()
 	c, err := Run(ctx, dockerImage, WithImageSubstitutors(newPrependHubRegistry(hubPrefixWithTrailingSlash)))
 	CleanupContainer(t, c)
 	require.NoError(t, err)

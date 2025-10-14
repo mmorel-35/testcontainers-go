@@ -1,7 +1,6 @@
 package inbucket
 
 import (
-	"context"
 	"net/smtp"
 	"testing"
 

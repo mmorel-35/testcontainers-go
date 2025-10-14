@@ -69,16 +69,17 @@ func TestExtractDockerHost(t *testing.T) {
 	mockCallbackCheck(t, testCallbackCheckPassing)
 
 	t.Run("Docker Host is extracted just once", func(t *testing.T) {
+		ctx := t.Context()
 		expected := "/path/to/docker.sock"
 		t.Setenv("DOCKER_HOST", expected)
 
-		host := MustExtractDockerHost(t.Context())
+		host := MustExtractDockerHost(ctx)
 
 		require.Equal(t, expected, host)
 
 		t.Setenv("DOCKER_HOST", "/path/to/another/docker.sock")
 
-		host = MustExtractDockerHost(t.Context())
+		host = MustExtractDockerHost(ctx)
 		require.Equal(t, expected, host)
 	})
 

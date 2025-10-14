@@ -44,10 +44,10 @@ func TestNew(t *testing.T) {
 	testcontainers.CleanupContainer(t, nginxC)
 	require.NoError(t, err)
 
-	client, err := testcontainers.NewDockerClientWithOpts(t.Context())
+	client, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 
-	resources, err := client.NetworkList(t.Context(), dockernetwork.ListOptions{
+	resources, err := client.NetworkList(ctx, dockernetwork.ListOptions{
 		Filters: filters.NewArgs(filters.Arg("name", networkName)),
 	})
 	require.NoError(t, err)
@@ -252,8 +252,9 @@ func TestNew_withOptions(t *testing.T) {
 }
 
 func TestWithNetwork(t *testing.T) {
+	ctx := t.Context()
 	// first create the network to be reused
-	nw, err := network.New(t.Context(), network.WithLabels(map[string]string{"network-type": "unique"}))
+	nw, err := network.New(ctx, network.WithLabels(map[string]string{"network-type": "unique"}))
 	require.NoError(t, err)
 	testcontainers.CleanupNetwork(t, nw)
 
@@ -276,10 +277,10 @@ func TestWithNetwork(t *testing.T) {
 	}
 
 	// verify that the network is created only once
-	client, err := testcontainers.NewDockerClientWithOpts(t.Context())
+	client, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 
-	resources, err := client.NetworkList(t.Context(), dockernetwork.ListOptions{
+	resources, err := client.NetworkList(ctx, dockernetwork.ListOptions{
 		Filters: filters.NewArgs(filters.Arg("name", networkName)),
 	})
 	require.NoError(t, err)

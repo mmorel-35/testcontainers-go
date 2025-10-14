@@ -1,6 +1,7 @@
 package nats_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"

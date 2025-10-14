@@ -92,20 +92,17 @@ func TestOllama_withReuse(t *testing.T) {
 	assertLoadedModel(t, ctr)
 
 	t.Run("reuse-container", func(t *testing.T) {
+		ctx := t.Context()
 		ctr2, err := ollama.Run(ctx, "ollama/ollama:0.5.7", testcontainers.WithReuseByName("ollama-container"))
 		testcontainers.CleanupContainer(t, ctr2)
 		require.NoError(t, err)
-		ctx := t.Context()
 
-		//nolint:contextcheck // Using test-scoped context from line 98
 		_, _, err = ctr2.Exec(ctx, []string{"ollama", "pull", model})
 		require.NoError(t, err)
 
-		//nolint:contextcheck // Using test-scoped context from line 98
 		_, _, err = ctr2.Exec(ctx, []string{"ollama", "run", model})
 		require.NoError(t, err)
 
-		//nolint:contextcheck // assertLoadedModel uses t.Context() internally
 		assertLoadedModel(t, ctr2)
 	})
 }

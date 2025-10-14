@@ -1,6 +1,7 @@
 package databend_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"

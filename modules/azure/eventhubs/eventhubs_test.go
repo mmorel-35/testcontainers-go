@@ -1,7 +1,6 @@
 package eventhubs_test
 
 import (
-	"context"
 	_ "embed"
 	"io"
 	"strings"

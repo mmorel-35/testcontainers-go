@@ -1,6 +1,7 @@
 package elasticsearch_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"

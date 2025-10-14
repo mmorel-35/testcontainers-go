@@ -1,7 +1,6 @@
 package etcd
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"testing"
@@ -41,24 +40,25 @@ func TestTerminate(t *testing.T) {
 
 	// verify that the network and the containers does no longer exist
 
-	cli, err := testcontainers.NewDockerClientWithOpts(t.Context())
+	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 	defer cli.Close()
 
-	_, err = cli.ContainerInspect(t.Context(), ctr.GetContainerID())
+	_, err = cli.ContainerInspect(ctx, ctr.GetContainerID())
 	require.True(t, errdefs.IsNotFound(err))
 
 	for _, child := range ctr.childNodes {
-		_, err := cli.ContainerInspect(t.Context(), child.GetContainerID())
+		_, err := cli.ContainerInspect(ctx, child.GetContainerID())
 		require.True(t, errdefs.IsNotFound(err))
 	}
 
-	_, err = cli.NetworkInspect(t.Context(), ctr.opts.clusterNetwork.ID, network.InspectOptions{})
+	_, err = cli.NetworkInspect(ctx, ctr.opts.clusterNetwork.ID, network.InspectOptions{})
 	require.True(t, errdefs.IsNotFound(err))
 }
 
 func TestTerminate_partiallyInitialised(t *testing.T) {
-	newNetwork, err := tcnetwork.New(t.Context())
+	ctx := t.Context()
+	newNetwork, err := tcnetwork.New(ctx)
 	require.NoError(t, err)
 
 	ctr := &EtcdContainer{
@@ -67,13 +67,13 @@ func TestTerminate_partiallyInitialised(t *testing.T) {
 		},
 	}
 
-	require.NoError(t, ctr.Terminate(t.Context()))
+	require.NoError(t, ctr.Terminate(ctx))
 
-	cli, err := testcontainers.NewDockerClientWithOpts(t.Context())
+	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 	defer cli.Close()
 
-	_, err = cli.NetworkInspect(t.Context(), ctr.opts.clusterNetwork.ID, network.InspectOptions{})
+	_, err = cli.NetworkInspect(ctx, ctr.opts.clusterNetwork.ID, network.InspectOptions{})
 	require.True(t, errdefs.IsNotFound(err))
 }
 

@@ -395,25 +395,23 @@ func TestSnapshot(t *testing.T) {
 			require.NoError(t, err)
 
 			t.Run("Test inserting a user", func(t *testing.T) {
+				ctx := t.Context()
 				t.Cleanup(func() {
 					// 3. In each test, reset the DB to its snapshot state.
 					err = ctr.Restore(ctx)
 					require.NoError(t, err)
 				})
 
-				//nolint:contextcheck // Using test-scoped context
-				conn, err := pgx.Connect(t.Context(), dbURL)
+				conn, err := pgx.Connect(ctx, dbURL)
 				require.NoError(t, err)
-				//nolint:contextcheck // Using test-scoped context
-				defer conn.Close(t.Context())
+				defer conn.Close(ctx)
 
 				_, err = conn.Exec(ctx, "INSERT INTO users(name, age) VALUES ($1, $2)", "test", 42)
 				require.NoError(t, err)
 
 				var name string
 				var age int64
-				err = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
-				//nolint:contextcheck // Using test-scoped context
+				err = conn.QueryRow(ctx, "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 				require.NoError(t, err)
 
 				require.Equal(t, "test", name)
@@ -422,18 +420,19 @@ func TestSnapshot(t *testing.T) {
 
 			// 4. Run as many tests as you need, they will each get a clean database
 			t.Run("Test querying empty DB", func(t *testing.T) {
+				ctx := t.Context()
 				t.Cleanup(func() {
 					err = ctr.Restore(ctx)
 					require.NoError(t, err)
 				})
 
-				conn, err := pgx.Connect(t.Context(), dbURL)
+				conn, err := pgx.Connect(ctx, dbURL)
 				require.NoError(t, err)
-				defer conn.Close(t.Context())
+				defer conn.Close(ctx)
 
 				var name string
 				var age int64
-				err = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+				err = conn.QueryRow(ctx, "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 				require.ErrorIs(t, err, pgx.ErrNoRows)
 			})
 			// }
@@ -468,6 +467,7 @@ func TestSnapshotWithOverrides(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Test that the restore works when not using defaults", func(t *testing.T) {
+		ctx := t.Context()
 		_, _, err = ctr.Exec(ctx, []string{"psql", "-U", user, "-d", dbname, "-c", "INSERT INTO users(name, age) VALUES ('test', 42)"})
 		require.NoError(t, err)
 
@@ -475,12 +475,12 @@ func TestSnapshotWithOverrides(t *testing.T) {
 		err = ctr.Restore(ctx)
 		require.NoError(t, err)
 
-		conn, err := pgx.Connect(t.Context(), dbURL)
+		conn, err := pgx.Connect(ctx, dbURL)
 		require.NoError(t, err)
-		defer conn.Close(t.Context())
+		defer conn.Close(ctx)
 
 		var count int64
-		err = conn.QueryRow(t.Context(), "SELECT COUNT(1) FROM users").Scan(&count)
+		err = conn.QueryRow(ctx, "SELECT COUNT(1) FROM users").Scan(&count)
 		require.NoError(t, err)
 
 		require.Zero(t, count)
@@ -547,22 +547,23 @@ func TestSnapshotWithDockerExecFallback(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Test inserting a user", func(t *testing.T) {
+		ctx := t.Context()
 		t.Cleanup(func() {
 			// 3. In each test, reset the DB to its snapshot state.
 			err := ctr.Restore(ctx)
 			require.NoError(t, err)
 		})
 
-		conn, err2 := pgx.Connect(t.Context(), dbURL)
+		conn, err2 := pgx.Connect(ctx, dbURL)
 		require.NoError(t, err2)
-		defer conn.Close(t.Context())
+		defer conn.Close(ctx)
 
 		_, err2 = conn.Exec(ctx, "INSERT INTO users(name, age) VALUES ($1, $2)", "test", 42)
 		require.NoError(t, err2)
 
 		var name string
 		var age int64
-		err2 = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+		err2 = conn.QueryRow(ctx, "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 		require.NoError(t, err2)
 
 		require.Equal(t, "test", name)
@@ -570,19 +571,20 @@ func TestSnapshotWithDockerExecFallback(t *testing.T) {
 	})
 
 	t.Run("Test querying empty DB", func(t *testing.T) {
+		ctx := t.Context()
 		// 4. Run as many tests as you need, they will each get a clean database
 		t.Cleanup(func() {
 			err := ctr.Restore(ctx)
 			require.NoError(t, err)
 		})
 
-		conn, err2 := pgx.Connect(t.Context(), dbURL)
+		conn, err2 := pgx.Connect(ctx, dbURL)
 		require.NoError(t, err2)
-		defer conn.Close(t.Context())
+		defer conn.Close(ctx)
 
 		var name string
 		var age int64
-		err2 = conn.QueryRow(t.Context(), "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
+		err2 = conn.QueryRow(ctx, "SELECT name, age FROM users LIMIT 1").Scan(&name, &age)
 		require.ErrorIs(t, err2, pgx.ErrNoRows)
 	})
 	// }

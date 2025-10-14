@@ -1,6 +1,7 @@
 package dolt_test
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"

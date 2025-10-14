@@ -221,16 +221,16 @@ func (r *dynamoDBResolver) ResolveEndpoint(_ context.Context, _ dynamodb.Endpoin
 // getDynamoDBClient returns a new DynamoDB client with the endpoint resolver set to the DynamoDB container's host and port
 func getDynamoDBClient(t *testing.T, c *tcdynamodb.DynamoDBContainer) *dynamodb.Client {
 	t.Helper()
-
+	ctx := t.Context()
 	// createClient {
 	var errs []error
 
-	hostPort, err := c.ConnectionString(t.Context())
+	hostPort, err := c.ConnectionString(ctx)
 	if err != nil {
 		errs = append(errs, fmt.Errorf("get connection string: %w", err))
 	}
 
-	cfg, err := config.LoadDefaultConfig(t.Context(), config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
 		Value: aws.Credentials{
 			AccessKeyID:     "DUMMYIDEXAMPLE",
 			SecretAccessKey: "DUMMYEXAMPLEKEY",

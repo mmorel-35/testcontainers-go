@@ -1,6 +1,7 @@
 package socat_test
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"

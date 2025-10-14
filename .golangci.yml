@@ -25,11 +25,16 @@ linters:
     - thelper
     - usestdlibvars
     - usetesting
-  presets:
-    - comments
-    - common-false-positives
-    - legacy
-    - std-error-handling
+  exclusions:
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - contextcheck
+        text: "CleanupContainer"
   settings:
     errorlint:
       asserts: true

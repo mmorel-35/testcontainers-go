@@ -1,6 +1,7 @@
 package redpanda_test
 
 import (
+	"context"
 	"fmt"
 	"log"
 

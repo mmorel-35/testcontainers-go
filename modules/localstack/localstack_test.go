@@ -59,12 +59,13 @@ func TestSetDockerHost(t *testing.T) {
 		})
 
 		t.Run("HOSTNAME_EXTERNAL matches the daemon host because there are no aliases", func(t *testing.T) {
-			dockerProvider, err := testcontainers.NewDockerProvider(t.Context())
+			ctx := t.Context()
+			dockerProvider, err := testcontainers.NewDockerProvider(ctx)
 			require.NoError(t, err)
 			defer dockerProvider.Close()
 
 			// because the daemon host could be a remote one, we need to get it from the provider
-			expectedDaemonHost, err := dockerProvider.DaemonHost(t.Context())
+			expectedDaemonHost, err := dockerProvider.DaemonHost(ctx)
 			require.NoError(t, err)
 
 			req := generateContainerRequest()
@@ -72,7 +73,7 @@ func TestSetDockerHost(t *testing.T) {
 			req.Networks = []string{"foo", "bar", "baaz"}
 			req.NetworkAliases = map[string][]string{}
 
-			reason, err := setDockerHost(t.Context(), req, tt.envVar)
+			reason, err := setDockerHost(ctx, req, tt.envVar)
 			require.NoError(t, err)
 			require.Equal(t, "to match host-routable address for container", reason)
 			require.Equal(t, expectedDaemonHost, req.Env[tt.envVar])

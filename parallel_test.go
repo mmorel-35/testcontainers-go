@@ -96,7 +96,8 @@ func TestParallelContainers(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			res, err := ParallelContainers(t.Context(), tc.reqs, ParallelContainersOptions{})
+			ctx := t.Context()
+			res, err := ParallelContainers(ctx, tc.reqs, ParallelContainersOptions{})
 			for _, c := range res {
 				CleanupContainer(t, c)
 			}

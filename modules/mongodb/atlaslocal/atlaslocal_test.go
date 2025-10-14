@@ -31,8 +31,8 @@ func TestMongoDBAtlasLocal(t *testing.T) {
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
-	client, td := newMongoClient(t, ctx, ctr)
-	defer td()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
 	err = client.Ping(ctx, nil)
 	require.NoError(t, err)
@@ -167,6 +167,7 @@ func TestSCRAMAuth(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Construct the custom options for the MongoDB Atlas Local container.
 			opts := []testcontainers.ContainerCustomizer{}
+			ctx := t.Context()
 
 			if tc.username != "" {
 				opts = append(opts, atlaslocal.WithUsername(tc.username))
@@ -190,7 +191,7 @@ func TestSCRAMAuth(t *testing.T) {
 			})
 
 			// Create the MongoDB Atlas Local container with the specified options.
-			ctr, err := atlaslocal.Run(t.Context(), latestImage, opts...)
+			ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 			testcontainers.CleanupContainer(t, ctr)
 
 			if tc.wantRunErr != "" {
@@ -213,8 +214,8 @@ func TestSCRAMAuth(t *testing.T) {
 				requireEnvVar(t, ctr, "MONGODB_INITDB_ROOT_PASSWORD_FILE", "/run/secrets/mongo-root-password")
 			}
 
-			client, td := newMongoClient(t, t.Context(), ctr)
-			defer td()
+			client, td := newMongoClient(t, ctr)
+			defer td(t)
 
 			// Execute an insert operation to verify the connection and
 			// authentication.
@@ -349,6 +350,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 }
 
 func TestWithInitDatabase(t *testing.T) {
+	ctx := t.Context()
 	initScripts := map[string]string{
 		"01-seed.js": `db.foo.insertOne({ _id: 1, seeded: true });`,
 	}
@@ -359,21 +361,21 @@ func TestWithInitDatabase(t *testing.T) {
 		atlaslocal.WithInitScripts(tmpDir),
 	}
 
-	ctr, err := atlaslocal.Run(t.Context(), latestImage, opts...)
+	ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
 	requireInitScriptsExist(t, ctr, initScripts)
 	requireEnvVar(t, ctr, "MONGODB_INITDB_DATABASE", "mydb")
 
-	client, td := newMongoClient(t, t.Context(), ctr)
-	defer td()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
 	coll := client.Database("mydb").Collection("foo")
 
 	seed := bson.D{{Key: "_id", Value: int32(1)}, {Key: "seeded", Value: true}}
 
-	res := coll.FindOne(t.Context(), seed)
+	res := coll.FindOne(ctx, seed)
 	require.NoError(t, res.Err())
 
 	var doc bson.D
@@ -430,30 +432,31 @@ func TestWithInitScripts(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			tmpDir := createInitScripts(t, tc.initScripts)
+			ctx := t.Context()
 
 			// Start container with the init scripts mounted.
 			opts := []testcontainers.ContainerCustomizer{
 				atlaslocal.WithInitScripts(tmpDir),
 			}
 
-			ctr, err := atlaslocal.Run(t.Context(), latestImage, opts...)
+			ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
 			requireInitScriptsExist(t, ctr, tc.initScripts)
 
 			// Connect to the server.
-			client, td := newMongoClient(t, t.Context(), ctr)
-			defer td()
+			client, td := newMongoClient(t, ctr)
+			defer td(t)
 
 			// Fetch the seeded data.
 			coll := client.Database("test").Collection("foo")
 
-			cur, err := coll.Find(t.Context(), bson.D{})
+			cur, err := coll.Find(ctx, bson.D{})
 			require.NoError(t, err)
 
 			var results []bson.D
-			require.NoError(t, cur.All(t.Context(), &results))
+			require.NoError(t, cur.All(ctx, &results))
 
 			require.ElementsMatch(t, results, tc.want, "Seeded documents do not match expected values")
 		})
@@ -532,11 +535,12 @@ func TestConnectionString(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctr, err := atlaslocal.Run(t.Context(), latestImage, tc.opts...)
+			ctx := t.Context()
+			ctr, err := atlaslocal.Run(ctx, latestImage, tc.opts...)
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
-			csRaw, err := ctr.ConnectionString(t.Context())
+			csRaw, err := ctr.ConnectionString(ctx)
 			require.NoError(t, err)
 
 			connString, err := connstring.ParseAndValidate(csRaw)
@@ -644,16 +648,16 @@ func createSearchIndex(t *testing.T, ctx context.Context, coll *mongo.Collection
 // aggregation using the search index.
 func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
+	ctx := t.Context()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
-	client, td := newMongoClient(t, t.Context(), ctr)
-	defer td()
-
-	err := client.Database("test").CreateCollection(t.Context(), "search")
+	err := client.Database("test").CreateCollection(ctx, "search")
 	require.NoError(t, err)
 
 	coll := client.Database("test").Collection("search")
 
-	siCtx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
+	siCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 
 	// Create a search index on the collection.
@@ -661,7 +665,7 @@ func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 
 	// Insert a document into the collection and aggregate it using the search
 	// index which should log the operation to the mongot log file.
-	_, err = coll.InsertOne(t.Context(), bson.D{{Key: "txt", Value: "hello"}})
+	_, err = coll.InsertOne(ctx, bson.D{{Key: "txt", Value: "hello"}})
 	require.NoError(t, err)
 
 	pipeline := mongo.Pipeline{{
@@ -670,20 +674,20 @@ func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 		}},
 	}}
 
-	cur, err := coll.Aggregate(t.Context(), pipeline)
+	cur, err := coll.Aggregate(ctx, pipeline)
 	require.NoError(t, err)
 
-	err = cur.Close(t.Context())
+	err = cur.Close(ctx)
 	require.NoError(t, err)
 }
 
 func newMongoClient(
 	t *testing.T,
-	ctx context.Context,
 	ctr testcontainers.Container,
 	opts ...*options.ClientOptions,
-) (*mongo.Client, func()) {
+) (*mongo.Client, func(t *testing.T)) {
 	t.Helper()
+	ctx := t.Context()
 
 	connString, err := ctr.(*atlaslocal.Container).ConnectionString(ctx)
 	require.NoError(t, err)
@@ -697,9 +701,9 @@ func newMongoClient(
 	client, err := mongo.Connect(copts...)
 	require.NoError(t, err)
 
-	return client, func() {
-		err := client.Disconnect(t.Context())
-		require.NoError(t, err, "Failed to disconnect MongoDB client")
+	return client, func(t *testing.T) {
+		t.Helper()
+		require.NoError(t, client.Disconnect(t.Context()), "Failed to disconnect MongoDB client")
 	}
 }
 

@@ -35,6 +35,7 @@ func TestGenericContainer_stop_start_withReuse(t *testing.T) {
 }
 
 func TestGenericContainer_pause_start_withReuse(t *testing.T) {
+	ctx := t.Context()
 	containerName := "my-nginx"
 
 	opts := []testcontainers.ContainerCustomizer{
@@ -42,21 +43,21 @@ func TestGenericContainer_pause_start_withReuse(t *testing.T) {
 		testcontainers.WithReuseByName(containerName),
 	}
 
-	ctr, err := testcontainers.Run(t.Context(), nginxAlpineImage, opts...)
+	ctr, err := testcontainers.Run(ctx, nginxAlpineImage, opts...)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 	require.NotNil(t, ctr)
 
 	// Pause the container is not supported by our API, but we can do it manually
 	// by using the Docker client.
-	cli, err := core.NewClient(t.Context())
+	cli, err := core.NewClient(ctx)
 	require.NoError(t, err)
 
-	err = cli.ContainerPause(t.Context(), ctr.GetContainerID())
+	err = cli.ContainerPause(ctx, ctr.GetContainerID())
 	require.NoError(t, err)
 
 	// Because the container is paused, it should not be possible to start it again.
-	ctr1, err := testcontainers.Run(t.Context(), nginxAlpineImage, opts...)
+	ctr1, err := testcontainers.Run(ctx, nginxAlpineImage, opts...)
 	testcontainers.CleanupContainer(t, ctr1)
 	require.ErrorIs(t, err, errors.ErrUnsupported)
 }
