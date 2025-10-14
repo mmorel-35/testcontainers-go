@@ -120,7 +120,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Single volume mount - with options",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.DockerVolumeMountSource{
 						Name: "app-data",
 						VolumeOptions: &mount.VolumeOptions{
@@ -170,7 +170,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Single tmpfs mount - with options",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.DockerTmpfsMountSource{
 						TmpfsOptions: &mount.TmpfsOptions{
 							SizeBytes: 50 * 1024 * 1024,
@@ -194,7 +194,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Image mount",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.NewDockerImageMountSource("my-custom-image:latest", "data"),
 					Target: "/data",
 				},

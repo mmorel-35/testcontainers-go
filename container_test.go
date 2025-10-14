@@ -298,7 +298,8 @@ func Test_BuildImageWithContexts(t *testing.T) {
 				}),
 				testcontainers.WithWaitStrategy(wait.ForLog(testCase.ExpectedEchoOutput).WithStartupTimeout(1*time.Minute)),
 			)
-//nolint:contextcheck // Test cleanup function uses context.Background() internally 			testcontainers.CleanupContainer(t, c)
+
+			testcontainers.CleanupContainer(t, c)
 
 			if testCase.ExpectedError != "" {
 				require.EqualError(t, err, testCase.ExpectedError)
@@ -318,7 +319,6 @@ func TestCustomLabelsImage(t *testing.T) {
 
 	ctx := t.Context()
 
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
 	ctr, err := testcontainers.Run(ctx, "alpine:latest", testcontainers.WithLabels(map[string]string{myLabelName: myLabelValue}))
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
@@ -349,7 +349,7 @@ func TestCustomLabelsBuildOptionsModifier(t *testing.T) {
 				}
 			},
 		}),
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
+
 		testcontainers.WithLabels(map[string]string{myLabelName: myLabelValue}),
 	)
 	testcontainers.CleanupContainer(t, ctr)
@@ -367,7 +367,7 @@ func Test_GetLogsFromFailedContainer(t *testing.T) {
 	c, err := testcontainers.Run(
 		ctx, "alpine",
 		testcontainers.WithCmd("echo", "-n", "I was not expecting this"),
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
+
 		testcontainers.WithWaitStrategy(wait.ForLog("I was expecting this").WithStartupTimeout(5*time.Second)),
 	)
 	// }
@@ -462,7 +462,6 @@ func TestImageSubstitutors(t *testing.T) {
 		},
 	}
 
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			ctx := t.Context()

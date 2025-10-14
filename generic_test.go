@@ -31,7 +31,6 @@ func TestGenericReusableContainer(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.True(t, n1.IsRunning())
-//nolint:contextcheck // Test cleanup function uses context.Background() internally 	CleanupContainer(t, n1)
 
 	copiedFileName := "hello_copy.sh"
 	err = n1.CopyFileToContainer(ctx, "./testdata/hello.sh", "/"+copiedFileName, 700)
@@ -82,7 +81,6 @@ func TestGenericReusableContainer(t *testing.T) {
 				opts = append(opts, WithReuseByName(tc.containerName))
 			}
 
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
 			n2, err := Run(ctx, nginxAlpineImage, opts...)
 			CleanupContainer(t, n2)
 			tc.errorMatcher(t, err)
@@ -102,7 +100,6 @@ func TestGenericContainerShouldReturnRefOnError(t *testing.T) {
 	// created container, so that we can Destroy it.
 	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Second)
 	defer cancel()
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
 
 	c, err := Run(ctx, nginxAlpineImage, WithWaitStrategy(wait.ForLog("this string should not be present in the logs")))
 	CleanupContainer(t, c)
@@ -144,7 +141,6 @@ func TestGenericReusableContainerInSubprocess(t *testing.T) {
 	provider, err := NewDockerProvider(t.Context())
 	require.NoError(t, err)
 
-//nolint:contextcheck // Test cleanup function uses context.Background() internally
 	provider.SetClient(cli)
 
 	nginxC, err := provider.ContainerFromType(t.Context(), ctrs[0])
