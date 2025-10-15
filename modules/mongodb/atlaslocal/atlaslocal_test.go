@@ -25,14 +25,14 @@ import (
 const latestImage = "mongodb/mongodb-atlas-local:latest"
 
 func TestMongoDBAtlasLocal(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := atlaslocal.Run(ctx, latestImage)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
-	client, td := newMongoClient(t, ctx, ctr)
-	defer td()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
 	err = client.Ping(ctx, nil)
 	require.NoError(t, err)
@@ -167,6 +167,7 @@ func TestSCRAMAuth(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Construct the custom options for the MongoDB Atlas Local container.
 			opts := []testcontainers.ContainerCustomizer{}
+			ctx := t.Context()
 
 			if tc.username != "" {
 				opts = append(opts, atlaslocal.WithUsername(tc.username))
@@ -190,7 +191,7 @@ func TestSCRAMAuth(t *testing.T) {
 			})
 
 			// Create the MongoDB Atlas Local container with the specified options.
-			ctr, err := atlaslocal.Run(context.Background(), latestImage, opts...)
+			ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 			testcontainers.CleanupContainer(t, ctr)
 
 			if tc.wantRunErr != "" {
@@ -213,14 +214,14 @@ func TestSCRAMAuth(t *testing.T) {
 				requireEnvVar(t, ctr, "MONGODB_INITDB_ROOT_PASSWORD_FILE", "/run/secrets/mongo-root-password")
 			}
 
-			client, td := newMongoClient(t, context.Background(), ctr)
-			defer td()
+			client, td := newMongoClient(t, ctr)
+			defer td(t)
 
 			// Execute an insert operation to verify the connection and
 			// authentication.
 			coll := client.Database("test").Collection("foo")
 
-			_, err = coll.InsertOne(context.Background(), bson.D{{Key: "test", Value: "value"}})
+			_, err = coll.InsertOne(t.Context(), bson.D{{Key: "test", Value: "value"}})
 			require.NoError(t, err, "Failed to insert document with authentication")
 		})
 	}
@@ -228,7 +229,7 @@ func TestSCRAMAuth(t *testing.T) {
 
 func TestWithNoTelemetry(t *testing.T) {
 	t.Run("with", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage, atlaslocal.WithNoTelemetry())
+		ctr, err := atlaslocal.Run(t.Context(), latestImage, atlaslocal.WithNoTelemetry())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -236,7 +237,7 @@ func TestWithNoTelemetry(t *testing.T) {
 	})
 
 	t.Run("without", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage)
+		ctr, err := atlaslocal.Run(t.Context(), latestImage)
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -246,7 +247,7 @@ func TestWithNoTelemetry(t *testing.T) {
 
 func TestWithMongotLogFile(t *testing.T) {
 	t.Run("with", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage, atlaslocal.WithMongotLogFile())
+		ctr, err := atlaslocal.Run(t.Context(), latestImage, atlaslocal.WithMongotLogFile())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -257,7 +258,7 @@ func TestWithMongotLogFile(t *testing.T) {
 	})
 
 	t.Run("without", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage)
+		ctr, err := atlaslocal.Run(t.Context(), latestImage)
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -268,7 +269,7 @@ func TestWithMongotLogFile(t *testing.T) {
 	})
 
 	t.Run("to stdout", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage,
+		ctr, err := atlaslocal.Run(t.Context(), latestImage,
 			atlaslocal.WithMongotLogToStdout())
 		testcontainers.CleanupContainer(t, ctr)
 
@@ -283,7 +284,7 @@ func TestWithMongotLogFile(t *testing.T) {
 	})
 
 	t.Run("to stderr", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage,
+		ctr, err := atlaslocal.Run(t.Context(), latestImage,
 			atlaslocal.WithMongotLogToStderr())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
@@ -301,7 +302,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 	const runnerLogFile = "/tmp/runner.log"
 
 	t.Run("with", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage, atlaslocal.WithRunnerLogFile())
+		ctr, err := atlaslocal.Run(t.Context(), latestImage, atlaslocal.WithRunnerLogFile())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
 
@@ -310,7 +311,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 	})
 
 	t.Run("without", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage)
+		ctr, err := atlaslocal.Run(t.Context(), latestImage)
 		testcontainers.CleanupContainer(t, ctr)
 
 		require.NoError(t, err)
@@ -320,7 +321,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 	})
 
 	t.Run("to stdout", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage,
+		ctr, err := atlaslocal.Run(t.Context(), latestImage,
 			atlaslocal.WithRunnerLogToStdout())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
@@ -334,7 +335,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 	})
 
 	t.Run("to stderr", func(t *testing.T) {
-		ctr, err := atlaslocal.Run(context.Background(), latestImage,
+		ctr, err := atlaslocal.Run(t.Context(), latestImage,
 			atlaslocal.WithRunnerLogToStderr())
 		testcontainers.CleanupContainer(t, ctr)
 		require.NoError(t, err)
@@ -349,6 +350,7 @@ func TestWithRunnerLogFile(t *testing.T) {
 }
 
 func TestWithInitDatabase(t *testing.T) {
+	ctx := t.Context()
 	initScripts := map[string]string{
 		"01-seed.js": `db.foo.insertOne({ _id: 1, seeded: true });`,
 	}
@@ -359,21 +361,21 @@ func TestWithInitDatabase(t *testing.T) {
 		atlaslocal.WithInitScripts(tmpDir),
 	}
 
-	ctr, err := atlaslocal.Run(context.Background(), latestImage, opts...)
+	ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
 	requireInitScriptsExist(t, ctr, initScripts)
 	requireEnvVar(t, ctr, "MONGODB_INITDB_DATABASE", "mydb")
 
-	client, td := newMongoClient(t, context.Background(), ctr)
-	defer td()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
 	coll := client.Database("mydb").Collection("foo")
 
 	seed := bson.D{{Key: "_id", Value: int32(1)}, {Key: "seeded", Value: true}}
 
-	res := coll.FindOne(context.Background(), seed)
+	res := coll.FindOne(ctx, seed)
 	require.NoError(t, res.Err())
 
 	var doc bson.D
@@ -430,30 +432,31 @@ func TestWithInitScripts(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			tmpDir := createInitScripts(t, tc.initScripts)
+			ctx := t.Context()
 
 			// Start container with the init scripts mounted.
 			opts := []testcontainers.ContainerCustomizer{
 				atlaslocal.WithInitScripts(tmpDir),
 			}
 
-			ctr, err := atlaslocal.Run(context.Background(), latestImage, opts...)
+			ctr, err := atlaslocal.Run(ctx, latestImage, opts...)
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
 			requireInitScriptsExist(t, ctr, tc.initScripts)
 
 			// Connect to the server.
-			client, td := newMongoClient(t, context.Background(), ctr)
-			defer td()
+			client, td := newMongoClient(t, ctr)
+			defer td(t)
 
 			// Fetch the seeded data.
 			coll := client.Database("test").Collection("foo")
 
-			cur, err := coll.Find(context.Background(), bson.D{})
+			cur, err := coll.Find(ctx, bson.D{})
 			require.NoError(t, err)
 
 			var results []bson.D
-			require.NoError(t, cur.All(context.Background(), &results))
+			require.NoError(t, cur.All(ctx, &results))
 
 			require.ElementsMatch(t, results, tc.want, "Seeded documents do not match expected values")
 		})
@@ -481,7 +484,7 @@ func TestWithInitScripts_MultipleScripts(t *testing.T) {
 		atlaslocal.WithInitScripts(tmpDir2),
 	}
 
-	ctr, err := atlaslocal.Run(context.Background(), latestImage, opts...)
+	ctr, err := atlaslocal.Run(t.Context(), latestImage, opts...)
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
@@ -532,11 +535,12 @@ func TestConnectionString(t *testing.T) {
 
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			ctr, err := atlaslocal.Run(context.Background(), latestImage, tc.opts...)
+			ctx := t.Context()
+			ctr, err := atlaslocal.Run(ctx, latestImage, tc.opts...)
 			testcontainers.CleanupContainer(t, ctr)
 			require.NoError(t, err)
 
-			csRaw, err := ctr.ConnectionString(context.Background())
+			csRaw, err := ctr.ConnectionString(ctx)
 			require.NoError(t, err)
 
 			connString, err := connstring.ParseAndValidate(csRaw)
@@ -563,7 +567,7 @@ func requireEnvVar(t *testing.T, ctr testcontainers.Container, envVarName, expec
 
 	// testcontainers-go's Exec() returns a multiplexed stream in the same format
 	// used by the Docker API. Each frame is prefixed with an 8-byte header.
-	exitCode, reader, err := ctr.Exec(context.Background(), []string{"sh", "-c", "echo $" + envVarName}, exec.Multiplexed())
+	exitCode, reader, err := ctr.Exec(t.Context(), []string{"sh", "-c", "echo $" + envVarName}, exec.Multiplexed())
 	require.NoError(t, err)
 	require.Equal(t, 0, exitCode)
 
@@ -578,7 +582,7 @@ func requireMongotLogs(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
 
 	// Pull the log file and require non-empty.
-	reader, err := ctr.(*atlaslocal.Container).ReadMongotLogs(context.Background())
+	reader, err := ctr.(*atlaslocal.Container).ReadMongotLogs(t.Context())
 	require.NoError(t, err)
 	defer reader.Close()
 
@@ -590,7 +594,7 @@ func requireNoMongotLogs(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
 
 	// Pull the log file and require non-empty.
-	reader, err := ctr.(*atlaslocal.Container).ReadMongotLogs(context.Background())
+	reader, err := ctr.(*atlaslocal.Container).ReadMongotLogs(t.Context())
 	require.ErrorIs(t, err, os.ErrNotExist)
 
 	if reader != nil { // Failure case where reader is non-nil
@@ -602,7 +606,7 @@ func requireRunnerLogs(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
 
 	// Pull the log file and require non-empty.
-	reader, err := ctr.(*atlaslocal.Container).ReadRunnerLogs(context.Background())
+	reader, err := ctr.(*atlaslocal.Container).ReadRunnerLogs(t.Context())
 	require.NoError(t, err)
 
 	defer reader.Close()
@@ -615,7 +619,7 @@ func requireNoRunnerLogs(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
 
 	// Pull the log file and require non-empty.
-	reader, err := ctr.(*atlaslocal.Container).ReadRunnerLogs(context.Background())
+	reader, err := ctr.(*atlaslocal.Container).ReadRunnerLogs(t.Context())
 	require.ErrorIs(t, err, os.ErrNotExist)
 
 	if reader != nil { // Failure case where reader is non-nil
@@ -644,16 +648,16 @@ func createSearchIndex(t *testing.T, ctx context.Context, coll *mongo.Collection
 // aggregation using the search index.
 func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
+	ctx := t.Context()
+	client, td := newMongoClient(t, ctr)
+	defer td(t)
 
-	client, td := newMongoClient(t, context.Background(), ctr)
-	defer td()
-
-	err := client.Database("test").CreateCollection(context.Background(), "search")
+	err := client.Database("test").CreateCollection(ctx, "search")
 	require.NoError(t, err)
 
 	coll := client.Database("test").Collection("search")
 
-	siCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	siCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 
 	// Create a search index on the collection.
@@ -661,7 +665,7 @@ func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 
 	// Insert a document into the collection and aggregate it using the search
 	// index which should log the operation to the mongot log file.
-	_, err = coll.InsertOne(context.Background(), bson.D{{Key: "txt", Value: "hello"}})
+	_, err = coll.InsertOne(ctx, bson.D{{Key: "txt", Value: "hello"}})
 	require.NoError(t, err)
 
 	pipeline := mongo.Pipeline{{
@@ -670,20 +674,20 @@ func executeAggregation(t *testing.T, ctr testcontainers.Container) {
 		}},
 	}}
 
-	cur, err := coll.Aggregate(context.Background(), pipeline)
+	cur, err := coll.Aggregate(ctx, pipeline)
 	require.NoError(t, err)
 
-	err = cur.Close(context.Background())
+	err = cur.Close(ctx)
 	require.NoError(t, err)
 }
 
 func newMongoClient(
 	t *testing.T,
-	ctx context.Context,
 	ctr testcontainers.Container,
 	opts ...*options.ClientOptions,
-) (*mongo.Client, func()) {
+) (*mongo.Client, func(t *testing.T)) {
 	t.Helper()
+	ctx := t.Context()
 
 	connString, err := ctr.(*atlaslocal.Container).ConnectionString(ctx)
 	require.NoError(t, err)
@@ -697,9 +701,9 @@ func newMongoClient(
 	client, err := mongo.Connect(copts...)
 	require.NoError(t, err)
 
-	return client, func() {
-		err := client.Disconnect(context.Background())
-		require.NoError(t, err, "Failed to disconnect MongoDB client")
+	return client, func(t *testing.T) {
+		t.Helper()
+		require.NoError(t, client.Disconnect(t.Context()), "Failed to disconnect MongoDB client")
 	}
 }
 
@@ -726,7 +730,7 @@ func requireInitScriptsExist(t *testing.T, ctr testcontainers.Container, expecte
 
 	const dstDir = "/docker-entrypoint-initdb.d"
 
-	exit, r, err := ctr.Exec(context.Background(), []string{"sh", "-lc", "ls -l " + dstDir}, exec.Multiplexed())
+	exit, r, err := ctr.Exec(t.Context(), []string{"sh", "-lc", "ls -l " + dstDir}, exec.Multiplexed())
 	require.NoError(t, err)
 
 	// If the map is empty, the command returns exit code 2.
@@ -744,7 +748,7 @@ func requireInitScriptsExist(t *testing.T, ctr testcontainers.Container, expecte
 	for name, want := range expectedScripts {
 		require.Contains(t, listing, name, "Init script %s not found in container", name)
 
-		rc, err := ctr.CopyFileFromContainer(context.Background(), filepath.Join(dstDir, name))
+		rc, err := ctr.CopyFileFromContainer(t.Context(), filepath.Join(dstDir, name))
 		require.NoError(t, err, "Failed to copy init script %s from container", name)
 
 		got, err := io.ReadAll(rc)
@@ -763,7 +767,7 @@ func requireInitScriptsDoesNotExist(t *testing.T, ctr testcontainers.Container, 
 	// Sanity check to verify that all scripts are present.
 	for filename := range expectedScripts {
 		cmd := []string{"sh", "-lc", "ls -1 /docker-entrypoint-initdb.d 2>/dev/null || true"}
-		_, reader, err := ctr.Exec(context.Background(), cmd, exec.Multiplexed())
+		_, reader, err := ctr.Exec(t.Context(), cmd, exec.Multiplexed())
 		require.NoError(t, err)
 
 		raw, err := io.ReadAll(reader)
@@ -776,7 +780,7 @@ func requireInitScriptsDoesNotExist(t *testing.T, ctr testcontainers.Container, 
 func requireContainerLogsNotEmpty(t *testing.T, ctr testcontainers.Container) {
 	t.Helper()
 
-	logs, err := ctr.Logs(context.Background())
+	logs, err := ctr.Logs(t.Context())
 	require.NoError(t, err)
 
 	defer logs.Close()

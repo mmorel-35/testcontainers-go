@@ -135,7 +135,7 @@ func setDockerHost(ctx context.Context, req *testcontainers.GenericContainerRequ
 		return "to match last network alias on container with non-default network", nil
 	}
 
-	dockerProvider, err := testcontainers.NewDockerProvider()
+	dockerProvider, err := testcontainers.NewDockerProvider(ctx)
 	if err != nil {
 		return "", err
 	}

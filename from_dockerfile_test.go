@@ -17,13 +17,13 @@ import (
 )
 
 func TestBuildImageFromDockerfile(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := t.Context()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		// fromDockerfileIncludingRepo {
@@ -42,7 +42,8 @@ func TestBuildImageFromDockerfile(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})
@@ -51,13 +52,13 @@ func TestBuildImageFromDockerfile(t *testing.T) {
 }
 
 func TestBuildImageFromDockerfile_NoRepo(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := t.Context()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		FromDockerfile: FromDockerfile{
@@ -73,7 +74,8 @@ func TestBuildImageFromDockerfile_NoRepo(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})
@@ -82,7 +84,7 @@ func TestBuildImageFromDockerfile_NoRepo(t *testing.T) {
 }
 
 func TestBuildImageFromDockerfile_BuildError(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := Run(ctx, "",
 		WithDockerfile(FromDockerfile{
@@ -95,13 +97,13 @@ func TestBuildImageFromDockerfile_BuildError(t *testing.T) {
 }
 
 func TestBuildImageFromDockerfile_NoTag(t *testing.T) {
-	provider, err := NewDockerProvider()
+	ctx := t.Context()
+
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
 	cli := provider.Client()
-
-	ctx := context.Background()
 
 	tag, err := provider.BuildImage(ctx, &ContainerRequest{
 		FromDockerfile: FromDockerfile{
@@ -117,7 +119,8 @@ func TestBuildImageFromDockerfile_NoTag(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_, err := cli.ImageRemove(ctx, tag, image.RemoveOptions{
+		//nolint:usetesting // Cleanup needs fresh context after test completes
+		_, err := cli.ImageRemove(context.Background(), tag, image.RemoveOptions{
 			Force:         true,
 			PruneChildren: true,
 		})
@@ -128,7 +131,7 @@ func TestBuildImageFromDockerfile_NoTag(t *testing.T) {
 func TestBuildImageFromDockerfile_Target(t *testing.T) {
 	// there are three targets: target0, target1 and target2.
 	for i := range 3 {
-		ctx := context.Background()
+		ctx := t.Context()
 		c, err := Run(ctx, "",
 			WithDockerfile(FromDockerfile{
 				Context:    "testdata",
@@ -195,7 +198,7 @@ func ExampleGenericContainer_buildFromDockerfile() {
 
 func TestBuildImageFromDockerfile_TargetDoesNotExist(t *testing.T) {
 	// the context cancellation will happen with enough time for the build to fail.
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 3*time.Second)
 	defer cancel()
 
 	ctr, err := Run(ctx, "",

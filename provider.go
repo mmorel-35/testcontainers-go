@@ -95,7 +95,7 @@ type ContainerProvider interface {
 }
 
 // GetProvider provides the provider implementation for a certain type
-func (t ProviderType) GetProvider(opts ...GenericProviderOption) (GenericProvider, error) {
+func (t ProviderType) GetProvider(ctx context.Context, opts ...GenericProviderOption) (GenericProvider, error) {
 	opt := &GenericProviderOptions{
 		Logger: log.Default(),
 	}
@@ -112,14 +112,14 @@ func (t ProviderType) GetProvider(opts ...GenericProviderOption) (GenericProvide
 	switch pt {
 	case ProviderDefault, ProviderDocker:
 		providerOptions := append(Generic2DockerOptions(opts...), WithDefaultBridgeNetwork(Bridge))
-		provider, err := NewDockerProvider(providerOptions...)
+		provider, err := NewDockerProvider(ctx, providerOptions...)
 		if err != nil {
 			return nil, fmt.Errorf("%w, failed to create Docker provider", err)
 		}
 		return provider, nil
 	case ProviderPodman:
 		providerOptions := append(Generic2DockerOptions(opts...), WithDefaultBridgeNetwork(Podman))
-		provider, err := NewDockerProvider(providerOptions...)
+		provider, err := NewDockerProvider(ctx, providerOptions...)
 		if err != nil {
 			return nil, fmt.Errorf("%w, failed to create Docker provider", err)
 		}
@@ -129,7 +129,7 @@ func (t ProviderType) GetProvider(opts ...GenericProviderOption) (GenericProvide
 }
 
 // NewDockerProvider creates a Docker provider with the EnvClient
-func NewDockerProvider(provOpts ...DockerProviderOption) (*DockerProvider, error) {
+func NewDockerProvider(ctx context.Context, provOpts ...DockerProviderOption) (*DockerProvider, error) {
 	o := &DockerProviderOptions{
 		GenericProviderOptions: &GenericProviderOptions{
 			Logger: log.Default(),
@@ -140,7 +140,6 @@ func NewDockerProvider(provOpts ...DockerProviderOption) (*DockerProvider, error
 		provOpts[idx].ApplyDockerTo(o)
 	}
 
-	ctx := context.Background()
 	c, err := NewDockerClientWithOpts(ctx)
 	if err != nil {
 		return nil, err

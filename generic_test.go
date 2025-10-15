@@ -20,7 +20,7 @@ const (
 )
 
 func TestGenericReusableContainer(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	reusableContainerName := reusableContainerName + "_" + time.Now().Format("20060102150405")
 
@@ -31,7 +31,6 @@ func TestGenericReusableContainer(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.True(t, n1.IsRunning())
-	CleanupContainer(t, n1)
 
 	copiedFileName := "hello_copy.sh"
 	err = n1.CopyFileToContainer(ctx, "./testdata/hello.sh", "/"+copiedFileName, 700)
@@ -99,7 +98,7 @@ func TestGenericContainerShouldReturnRefOnError(t *testing.T) {
 	// In this test, we are going to cancel the context to exit the `wait.Strategy`.
 	// We want to make sure that the Run call will still return a reference to the
 	// created container, so that we can Destroy it.
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Second)
 	defer cancel()
 
 	c, err := Run(ctx, nginxAlpineImage, WithWaitStrategy(wait.ForLog("this string should not be present in the logs")))
@@ -109,6 +108,7 @@ func TestGenericContainerShouldReturnRefOnError(t *testing.T) {
 }
 
 func TestGenericReusableContainerInSubprocess(t *testing.T) {
+	ctx := t.Context()
 	wg := sync.WaitGroup{}
 	wg.Add(10)
 	for range 10 {
@@ -127,32 +127,33 @@ func TestGenericReusableContainerInSubprocess(t *testing.T) {
 
 	wg.Wait()
 
-	cli, err := NewDockerClientWithOpts(context.Background())
+	cli, err := NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 
 	f := filters.NewArgs(filters.KeyValuePair{Key: "name", Value: reusableContainerName})
 
-	ctrs, err := cli.ContainerList(context.Background(), container.ListOptions{
+	ctrs, err := cli.ContainerList(ctx, container.ListOptions{
 		All:     true,
 		Filters: f,
 	})
 	require.NoError(t, err)
 	require.Len(t, ctrs, 1)
 
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 
 	provider.SetClient(cli)
 
-	nginxC, err := provider.ContainerFromType(context.Background(), ctrs[0])
+	nginxC, err := provider.ContainerFromType(ctx, ctrs[0])
 	CleanupContainer(t, nginxC)
 	require.NoError(t, err)
 }
 
 func createReuseContainerInSubprocess(t *testing.T) string {
 	t.Helper()
+	ctx := t.Context()
 	// force verbosity in subprocesses, so that the output is printed
-	cmd := exec.CommandContext(t.Context(), os.Args[0], "-test.run=TestHelperContainerStarterProcess", "-test.v=true")
+	cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=TestHelperContainerStarterProcess", "-test.v=true")
 	cmd.Env = append(os.Environ(), "GO_WANT_HELPER_PROCESS=1")
 
 	output, err := cmd.CombinedOutput()
@@ -168,7 +169,7 @@ func TestHelperContainerStarterProcess(t *testing.T) {
 		t.Skip("Skipping helper test function. It's not a real test")
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	nginxC, err := Run(ctx, nginxDelayedImage,
 		WithExposedPorts(nginxDefaultPort),

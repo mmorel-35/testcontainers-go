@@ -1,7 +1,6 @@
 package testcontainers
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,7 +9,8 @@ import (
 )
 
 func TestProviderTypeGetProviderAutodetect(t *testing.T) {
-	dockerHost := core.MustExtractDockerHost(context.Background())
+	
+	dockerHost := core.MustExtractDockerHost(t.Context())
 	const podmanSocket = "unix://$XDG_RUNTIME_DIR/podman/podman.sock"
 
 	tests := []struct {
@@ -65,7 +65,7 @@ func TestProviderTypeGetProviderAutodetect(t *testing.T) {
 
 			t.Setenv("DOCKER_HOST", tt.DockerHost)
 
-			got, err := tt.tr.GetProvider()
+			got, err := tt.tr.GetProvider(t.Context())
 			require.NoErrorf(t, err, "ProviderType.GetProvider()")
 			provider, ok := got.(*DockerProvider)
 			require.Truef(t, ok, "ProviderType.GetProvider() = %T, want %T", got, &DockerProvider{})

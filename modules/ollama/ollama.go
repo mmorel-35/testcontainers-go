@@ -37,7 +37,7 @@ func (c *OllamaContainer) Commit(ctx context.Context, targetImage string) error 
 		return nil
 	}
 
-	cli, err := testcontainers.NewDockerClientWithOpts(context.Background())
+	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
 	if err != nil {
 		return err
 	}
@@ -90,6 +90,7 @@ func Run(ctx context.Context, img string, opts ...testcontainers.ContainerCustom
 
 	// Only request a GPU if NOT using local process and the host supports it.
 	if local == nil {
+		//nolint:contextcheck // withGpu() checks GPU support independently and doesn't need parent context
 		opts = append(opts, withGpu())
 	}
 

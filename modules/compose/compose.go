@@ -154,7 +154,7 @@ func NewDockerComposeWith(opts ...ComposeStackOption) (*DockerCompose, error) {
 		return nil, fmt.Errorf("initialize docker client: %w", err)
 	}
 
-	provider, err := testcontainers.NewDockerProvider(testcontainers.WithLogger(composeOptions.Logger))
+	provider, err := testcontainers.NewDockerProvider(context.Background(), testcontainers.WithLogger(composeOptions.Logger))
 	if err != nil {
 		return nil, fmt.Errorf("new docker provider: %w", err)
 	}

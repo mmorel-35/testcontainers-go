@@ -424,7 +424,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToOOMKilledContainer(t *testing.T) 
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "container crashed with out-of-memory (OOMKilled)"
 	require.EqualError(t, err, expected)
 }
@@ -470,7 +470,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToExitedContainer(t *testing.T) {
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "container exited with code 1"
 	require.EqualError(t, err, expected)
 }
@@ -515,7 +515,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToUnexpectedContainerStatus(t *test
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "unexpected container status \"dead\""
 	require.EqualError(t, err, expected)
 }
@@ -555,7 +555,7 @@ func TestHTTPStrategyFailsWhileRequestSendingDueToOOMKilledContainer(t *testing.
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "container crashed with out-of-memory (OOMKilled)"
 	require.EqualError(t, err, expected)
 }
@@ -596,7 +596,7 @@ func TestHttpStrategyFailsWhileRequestSendingDueToExitedContainer(t *testing.T) 
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "container exited with code 1"
 	require.EqualError(t, err, expected)
 }
@@ -636,7 +636,7 @@ func TestHttpStrategyFailsWhileRequestSendingDueToUnexpectedContainerStatus(t *t
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "unexpected container status \"dead\""
 	require.EqualError(t, err, expected)
 }
@@ -675,7 +675,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToNoExposedPorts(t *testing.T) {
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "no exposed tcp ports or mapped ports - cannot wait for status"
 	require.EqualError(t, err, expected)
 }
@@ -721,7 +721,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToOnlyUDPPorts(t *testing.T) {
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "no exposed tcp ports or mapped ports - cannot wait for status"
 	require.EqualError(t, err, expected)
 }
@@ -762,7 +762,7 @@ func TestHttpStrategyFailsWhileGettingPortDueToExposedPortNoBindings(t *testing.
 		WithStartupTimeout(500 * time.Millisecond).
 		WithPollInterval(100 * time.Millisecond)
 
-	err := wg.WaitUntilReady(context.Background(), target)
+	err := wg.WaitUntilReady(t.Context(), target)
 	expected := "no exposed tcp ports or mapped ports - cannot wait for status"
 	require.EqualError(t, err, expected)
 }

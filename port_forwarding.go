@@ -92,6 +92,7 @@ func exposeHostPorts(ctx context.Context, req *ContainerRequest, ports ...int) (
 	// start the SSHD container with the provided options
 	sshdContainer, err := newSshdContainer(ctx, opts...)
 	// Ensure the SSHD container is stopped and removed in case of error.
+	//nolint:contextcheck // TerminateContainer creates its own context internally for cleanup
 	defer func() {
 		if err != nil {
 			err = errors.Join(err, TerminateContainer(sshdContainer))
@@ -146,6 +147,7 @@ func exposeHostPorts(ctx context.Context, req *ContainerRequest, ports ...int) (
 	}
 
 	stopHooks := []ContainerHook{
+		//nolint:contextcheck // Function may need to create fresh context if parent is cancelled
 		func(ctx context.Context, _ Container) error {
 			if ctx.Err() != nil {
 				// Context already canceled, need to create a new one to ensure
@@ -328,6 +330,7 @@ func newPortForwarder(ctx context.Context, sshDAddr string, sshConfig *ssh.Clien
 		dialTimeout: time.Second * 2,
 	}
 
+	//nolint:contextcheck // Port forwarder runs independently with its own context
 	go pf.run()
 
 	return pf, nil

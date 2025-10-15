@@ -1,7 +1,6 @@
 package testcontainers
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,9 +12,10 @@ import (
 )
 
 func TestImageList(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := t.Context()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")
 
 	defer func() {
@@ -27,11 +27,11 @@ func TestImageList(t *testing.T) {
 		Image: "redis:latest",
 	}
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(ctx, req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
-	images, err := provider.ListImages(context.Background())
+	images, err := provider.ListImages(ctx)
 	require.NoErrorf(t, err, "listing images")
 
 	require.NotEmptyf(t, images, "no images retrieved")
@@ -47,9 +47,10 @@ func TestImageList(t *testing.T) {
 }
 
 func TestSaveImages(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := t.Context()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")
 
 	defer func() {
@@ -61,12 +62,12 @@ func TestSaveImages(t *testing.T) {
 		Image: "redis:latest",
 	}
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(ctx, req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
 	output := filepath.Join(t.TempDir(), "images.tar")
-	err = provider.SaveImages(context.Background(), output, req.Image)
+	err = provider.SaveImages(ctx, output, req.Image)
 	require.NoErrorf(t, err, "saving image %q", req.Image)
 
 	info, err := os.Stat(output)
@@ -76,9 +77,10 @@ func TestSaveImages(t *testing.T) {
 }
 
 func TestSaveImagesWithOpts(t *testing.T) {
-	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(context.Background()))
+	ctx := t.Context()
+	t.Setenv("DOCKER_HOST", core.MustExtractDockerHost(ctx))
 
-	provider, err := ProviderDocker.GetProvider()
+	provider, err := ProviderDocker.GetProvider(ctx)
 	require.NoErrorf(t, err, "failed to get provider")
 
 	defer func() {
@@ -94,13 +96,13 @@ func TestSaveImagesWithOpts(t *testing.T) {
 	p, err := platforms.ParseAll([]string{"linux/amd64"})
 	require.NoError(t, err)
 
-	ctr, err := provider.CreateContainer(context.Background(), req)
+	ctr, err := provider.CreateContainer(ctx, req)
 	CleanupContainer(t, ctr)
 	require.NoErrorf(t, err, "creating test container")
 
 	output := filepath.Join(t.TempDir(), "images.tar")
 	err = provider.SaveImagesWithOpts(
-		context.Background(), output, []string{req.Image}, SaveDockerImageWithPlatforms(p...),
+		ctx, output, []string{req.Image}, SaveDockerImageWithPlatforms(p...),
 	)
 	require.NoErrorf(t, err, "saving image %q", req.Image)
 

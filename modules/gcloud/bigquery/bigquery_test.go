@@ -2,7 +2,6 @@ package bigquery_test
 
 import (
 	"bytes"
-	"context"
 	_ "embed"
 	"errors"
 	"testing"
@@ -23,7 +22,7 @@ import (
 var dataYaml []byte
 
 func TestBigQueryWithDataYAML(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("valid", func(t *testing.T) {
 		bigQueryContainer, err := tcbigquery.Run(
@@ -89,6 +88,7 @@ func TestBigQueryWithDataYAML(t *testing.T) {
 			"ghcr.io/goccy/bigquery-emulator:0.6.1",
 			noValueOption(), // because --project is always added last, this option will receive `--project` as value, which results in an error
 			tcbigquery.WithProjectID("test"),
+
 			tcbigquery.WithDataYAML(bytes.NewReader(dataYaml)),
 		)
 		testcontainers.CleanupContainer(t, bigQueryContainer)

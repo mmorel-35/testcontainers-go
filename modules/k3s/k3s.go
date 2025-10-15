@@ -109,7 +109,7 @@ func getContainerHost(ctx context.Context, opts ...testcontainers.ContainerCusto
 	if logging == nil {
 		logging = log.Default()
 	}
-	p, err := req.ProviderType.GetProvider(testcontainers.WithLogger(logging))
+	p, err := req.ProviderType.GetProvider(ctx, testcontainers.WithLogger(logging))
 	if err != nil {
 		return "", err
 	}
@@ -184,7 +184,7 @@ func (c *K3sContainer) LoadImages(ctx context.Context, images ...string) error {
 }
 
 func (c *K3sContainer) LoadImagesWithOpts(ctx context.Context, images []string, opts ...testcontainers.SaveImageOption) error {
-	provider, err := testcontainers.ProviderDocker.GetProvider()
+	provider, err := testcontainers.ProviderDocker.GetProvider(ctx)
 	if err != nil {
 		return fmt.Errorf("getting docker provider %w", err)
 	}
@@ -198,7 +198,7 @@ func (c *K3sContainer) LoadImagesWithOpts(ctx context.Context, images []string, 
 		_ = os.Remove(imagesTar.Name())
 	}()
 
-	err = provider.SaveImagesWithOpts(context.Background(), imagesTar.Name(), images, opts...)
+	err = provider.SaveImagesWithOpts(ctx, imagesTar.Name(), images, opts...)
 	if err != nil {
 		return fmt.Errorf("saving images %w", err)
 	}

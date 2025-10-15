@@ -10,7 +10,9 @@ formatters:
         - prefix(github.com/testcontainers)
 linters:
   enable:
+    - contextcheck
     - errorlint
+    - fatcontext
     - gocritic
     - govet
     - misspell
@@ -22,12 +24,17 @@ linters:
     - testifylint
     - thelper
     - usestdlibvars
+    - usetesting
   exclusions:
     presets:
       - comments
       - common-false-positives
       - legacy
       - std-error-handling
+    rules:
+      - linters:
+          - contextcheck
+        text: "CleanupContainer"
   settings:
     errorlint:
       asserts: true

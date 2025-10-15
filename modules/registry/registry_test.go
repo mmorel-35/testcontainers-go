@@ -1,7 +1,6 @@
 package registry_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"path/filepath"
@@ -98,7 +97,7 @@ func TestRunContainer_authenticated(t *testing.T) {
 		setAuthConfig(tt, registryHost, "foo", "bar")
 
 		redisC, err := testcontainers.Run(
-			context.Background(), "",
+			t.Context(), "",
 			testcontainers.WithDockerfile(testcontainers.FromDockerfile{
 				Context: filepath.Join("testdata", "redis"),
 				BuildArgs: map[string]*string{
@@ -123,7 +122,7 @@ func TestRunContainer_authenticated(t *testing.T) {
 		// is correct.
 
 		redisC, err := testcontainers.Run(
-			context.Background(), "",
+			t.Context(), "",
 			testcontainers.WithDockerfile(testcontainers.FromDockerfile{
 				Context: filepath.Join("testdata", "redis"),
 				BuildArgs: map[string]*string{
@@ -137,14 +136,14 @@ func TestRunContainer_authenticated(t *testing.T) {
 		testcontainers.CleanupContainer(tt, redisC)
 		require.NoError(tt, err)
 
-		state, err := redisC.State(context.Background())
+		state, err := redisC.State(t.Context())
 		require.NoError(tt, err)
 		require.True(tt, state.Running, "expected redis container to be running, but it is not")
 	})
 }
 
 func TestRunContainer_authenticated_withCredentials(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	// htpasswdString {
 	registryContainer, err := registry.Run(
 		ctx,
@@ -172,7 +171,7 @@ func TestRunContainer_authenticated_withCredentials(t *testing.T) {
 
 func TestRunContainer_authenticated_htpasswd_atomic_per_container(t *testing.T) {
 	t.Parallel()
-	ctx := context.Background()
+	ctx := t.Context()
 	r := require.New(t)
 
 	type container struct {
@@ -232,7 +231,7 @@ func TestRunContainer_authenticated_htpasswd_atomic_per_container(t *testing.T) 
 }
 
 func TestRunContainer_wrongData(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	registryContainer, err := registry.Run(
 		ctx,
 		registry.DefaultImage,
@@ -252,7 +251,7 @@ func TestRunContainer_wrongData(t *testing.T) {
 	// The container won't be able to start because the data
 	// directory is wrong.
 
-	redisC, err := testcontainers.Run(context.Background(), "",
+	redisC, err := testcontainers.Run(t.Context(), "",
 		testcontainers.WithDockerfile(testcontainers.FromDockerfile{
 			Context: filepath.Join("testdata", "redis"),
 			BuildArgs: map[string]*string{
@@ -268,7 +267,7 @@ func TestRunContainer_wrongData(t *testing.T) {
 }
 
 func TestPullImage_samePlatform(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	registryContainer, err := registry.Run(ctx, registry.DefaultImage)
 	testcontainers.CleanupContainer(t, registryContainer)
 	require.NoError(t, err)

@@ -1,7 +1,6 @@
 package ollama_test
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -76,7 +75,7 @@ func TestOllama(t *testing.T) {
 }
 
 func TestOllama_withReuse(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := ollama.Run(ctx, "ollama/ollama:0.5.7", testcontainers.WithReuseByName("ollama-container"))
 	testcontainers.CleanupContainer(t, ctr)
@@ -93,10 +92,10 @@ func TestOllama_withReuse(t *testing.T) {
 	assertLoadedModel(t, ctr)
 
 	t.Run("reuse-container", func(t *testing.T) {
+		ctx := t.Context()
 		ctr2, err := ollama.Run(ctx, "ollama/ollama:0.5.7", testcontainers.WithReuseByName("ollama-container"))
 		testcontainers.CleanupContainer(t, ctr2)
 		require.NoError(t, err)
-		ctx := t.Context()
 
 		_, _, err = ctr2.Exec(ctx, []string{"ollama", "pull", model})
 		require.NoError(t, err)
@@ -133,7 +132,7 @@ func assertLoadedModel(t *testing.T, c *ollama.OllamaContainer) {
 }
 
 func TestRunContainer_withModel_error(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ollamaContainer, err := ollama.Run(
 		ctx,

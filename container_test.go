@@ -285,7 +285,7 @@ func Test_BuildImageWithContexts(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.Name, func(t *testing.T) {
 			t.Parallel()
-			ctx := context.Background()
+			ctx := t.Context()
 			a, err := testCase.ContextArchive()
 			require.NoError(t, err)
 
@@ -298,6 +298,7 @@ func Test_BuildImageWithContexts(t *testing.T) {
 				}),
 				testcontainers.WithWaitStrategy(wait.ForLog(testCase.ExpectedEchoOutput).WithStartupTimeout(1*time.Minute)),
 			)
+
 			testcontainers.CleanupContainer(t, c)
 
 			if testCase.ExpectedError != "" {
@@ -316,7 +317,7 @@ func TestCustomLabelsImage(t *testing.T) {
 		myLabelValue = "my-label-value"
 	)
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := testcontainers.Run(ctx, "alpine:latest", testcontainers.WithLabels(map[string]string{myLabelName: myLabelValue}))
 	testcontainers.CleanupContainer(t, ctr)
@@ -335,7 +336,7 @@ func TestCustomLabelsBuildOptionsModifier(t *testing.T) {
 		myBuildOptionValue = "my-bo-label-value"
 	)
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctr, err := testcontainers.Run(
 		ctx, "",
@@ -348,6 +349,7 @@ func TestCustomLabelsBuildOptionsModifier(t *testing.T) {
 				}
 			},
 		}),
+
 		testcontainers.WithLabels(map[string]string{myLabelName: myLabelValue}),
 	)
 	testcontainers.CleanupContainer(t, ctr)
@@ -360,11 +362,12 @@ func TestCustomLabelsBuildOptionsModifier(t *testing.T) {
 }
 
 func Test_GetLogsFromFailedContainer(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	// directDockerHubReference {
 	c, err := testcontainers.Run(
 		ctx, "alpine",
 		testcontainers.WithCmd("echo", "-n", "I was not expecting this"),
+
 		testcontainers.WithWaitStrategy(wait.ForLog("I was expecting this").WithStartupTimeout(5*time.Second)),
 	)
 	// }
@@ -461,7 +464,7 @@ func TestImageSubstitutors(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.Background()
+			ctx := t.Context()
 			ctr, err := testcontainers.Run(ctx, test.image, testcontainers.WithImageSubstitutors(test.substitutors...))
 			testcontainers.CleanupContainer(t, ctr)
 			if test.expectedError != nil {
@@ -476,7 +479,7 @@ func TestImageSubstitutors(t *testing.T) {
 }
 
 func TestShouldStartContainersInParallel(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	ctx, cancel := context.WithTimeout(t.Context(), 1*time.Minute)
 	t.Cleanup(cancel)
 
 	for i := range 3 {

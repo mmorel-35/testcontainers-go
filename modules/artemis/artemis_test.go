@@ -1,7 +1,6 @@
 package artemis_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"testing"
@@ -15,7 +14,7 @@ import (
 )
 
 func TestArtemis(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	tests := []struct {
 		name       string

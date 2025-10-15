@@ -23,9 +23,9 @@ import (
 )
 
 func TestPreCreateModifierHook(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
-	provider, err := NewDockerProvider()
+	provider, err := NewDockerProvider(ctx)
 	require.NoError(t, err)
 	defer provider.Close()
 
@@ -493,7 +493,7 @@ func TestLifecycleHooks(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			prints := []string{}
-			ctx := context.Background()
+			ctx := t.Context()
 			// optsWithLifecycleHooks {
 			opts := []ContainerCustomizer{
 				WithAdditionalLifecycleHooks(ContainerLifecycleHooks{
@@ -627,7 +627,7 @@ func (l *inMemoryLogger) Printf(format string, args ...any) {
 // }
 
 func TestLifecycleHooks_WithDefaultLogger(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// optsWithDefaultLoggingHook {
 	dl := inMemoryLogger{}
@@ -657,6 +657,7 @@ func TestLifecycleHooks_WithDefaultLogger(t *testing.T) {
 }
 
 func TestCombineLifecycleHooks(t *testing.T) {
+	ctx := t.Context()
 	prints := []string{}
 
 	preCreateFunc := func(prefix string, hook string, lifecycleID int, hookID int) func(ctx context.Context, req ContainerRequest) error {
@@ -700,26 +701,26 @@ func TestCombineLifecycleHooks(t *testing.T) {
 	// call all the hooks in the right order, honouring the lifecycle
 
 	req := ContainerRequest{}
-	err := hooks.Creating(context.Background())(req)
+	err := hooks.Creating(ctx)(req)
 	require.NoError(t, err)
 
 	c := &DockerContainer{}
 
-	err = hooks.Created(context.Background())(c)
+	err = hooks.Created(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Starting(context.Background())(c)
+	err = hooks.Starting(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Started(context.Background())(c)
+	err = hooks.Started(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Readied(context.Background())(c)
+	err = hooks.Readied(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Stopping(context.Background())(c)
+	err = hooks.Stopping(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Stopped(context.Background())(c)
+	err = hooks.Stopped(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Terminating(context.Background())(c)
+	err = hooks.Terminating(ctx)(c)
 	require.NoError(t, err)
-	err = hooks.Terminated(context.Background())(c)
+	err = hooks.Terminated(ctx)(c)
 	require.NoError(t, err)
 
 	// assertions
@@ -790,7 +791,7 @@ func TestCombineLifecycleHooks(t *testing.T) {
 }
 
 func TestLifecycleHooks_WithMultipleHooks(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	dl := inMemoryLogger{}
 
@@ -826,7 +827,7 @@ func (l *linesTestLogger) Printf(format string, args ...any) {
 }
 
 func TestPrintContainerLogsOnError(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	arrayOfLinesLogger := linesTestLogger{
 		data: []string{},
@@ -970,7 +971,7 @@ func Test_combineContainerHooks(t *testing.T) {
 		PostTerminates: []ContainerHook{userContainerHook, defaultContainerHook},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	ctxVal := reflect.ValueOf(ctx)
 	var req ContainerRequest
 	reqVal := reflect.ValueOf(req)

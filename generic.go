@@ -36,7 +36,7 @@ type GenericNetworkRequest struct {
 // Deprecated: use network.New instead
 // GenericNetwork creates a generic network with parameters
 func GenericNetwork(ctx context.Context, req GenericNetworkRequest) (Network, error) {
-	provider, err := req.ProviderType.GetProvider()
+	provider, err := req.ProviderType.GetProvider(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func GenericContainer(ctx context.Context, req GenericContainerRequest) (Contain
 		// Ensure there is always a non-nil logger by default
 		logger = log.Default()
 	}
-	provider, err := req.ProviderType.GetProvider(WithLogger(logger))
+	provider, err := req.ProviderType.GetProvider(ctx, WithLogger(logger))
 	if err != nil {
 		return nil, fmt.Errorf("get provider: %w", err)
 	}

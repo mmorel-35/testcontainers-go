@@ -1,7 +1,6 @@
 package testcontainers_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/docker/docker/api/types/mount"
@@ -121,7 +120,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Single volume mount - with options",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.DockerVolumeMountSource{
 						Name: "app-data",
 						VolumeOptions: &mount.VolumeOptions{
@@ -171,7 +170,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Single tmpfs mount - with options",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.DockerTmpfsMountSource{
 						TmpfsOptions: &mount.TmpfsOptions{
 							SizeBytes: 50 * 1024 * 1024,
@@ -195,7 +194,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 		{
 			name: "Image mount",
 			mounts: testcontainers.ContainerMounts{
-				{
+				testcontainers.ContainerMount{
 					Source: testcontainers.NewDockerImageMountSource("my-custom-image:latest", "data"),
 					Target: "/data",
 				},
@@ -224,7 +223,7 @@ func TestContainerMounts_PrepareMounts(t *testing.T) {
 func TestCreateContainerWithVolume(t *testing.T) {
 	// volumeMounts {
 	volumeName := "test-volume"
-	ctx := context.Background()
+	ctx := t.Context()
 
 	c, err := testcontainers.Run(ctx, "alpine",
 		testcontainers.WithMounts(testcontainers.ContainerMount{
@@ -250,7 +249,7 @@ func TestCreateContainerWithVolume(t *testing.T) {
 
 func TestMountsReceiveRyukLabels(t *testing.T) {
 	volumeName := "app-data"
-	ctx := context.Background()
+	ctx := t.Context()
 
 	client, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
